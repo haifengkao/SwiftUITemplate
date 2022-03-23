@@ -1,7 +1,7 @@
 # SwiftUI template for Tuist
 [Tuist](https://github.com/tuist/tuist) is a great tool to manage Swift projects.
 But I still have to write a lot of codes to config my project.
-So I decide to share my configuration codes. `SwiftUItemplate` is my opionionated configuration for `Tuist`.
+So I decide to share my configuration. `SwiftUItemplate` is my opionionated configuration for `Tuist`.
 
 ## Install
 
