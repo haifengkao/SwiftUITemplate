@@ -1,5 +1,14 @@
-import ProjectDescription
 
-let dependencies = Dependencies(swiftPackageManager: [
-    .package(url: "https://github.com/Alamofire/Alamofire", .upToNextMajor(from: "5.0.0")),
-])
+import ProjectDescription
+import ProjectDescriptionHelpers
+import SwiftUITemplate
+
+let dependencies = Dependencies(
+    swiftPackageManager: .init(
+        modules.allSwiftPacakges,
+
+        targetSettings: modules.allTargetSettings
+    ),
+
+    platforms: [platform]
+)

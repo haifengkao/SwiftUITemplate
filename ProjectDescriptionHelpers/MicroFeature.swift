@@ -26,43 +26,6 @@ public struct MicroFeature: HasReference, Hashable {
         ]))
     }
 
-    // internal init(name: String,
-    //              group: MicroFeatureGroup = .none,
-    //              requiredTargetTypes: RequiredTargetTypes) {
-    //
-    //    self.name = name
-    //    self.group = group
-    //    self.requiredTargetTypes = requiredTargetTypes
-    // }
-    //
-    // internal init(name: String,
-    //              group: MicroFeatureGroup = .none,
-    //              additionalDependencies: [Module],
-    //              unitTestDependencies: [Module],
-    //              requiredTargetTypes: RequiredTargetTypes = .defulatTargets) {
-    //
-    //    self.name = name
-    //    self.group = group
-    //    dependencies[.framework] = additionalDependencies
-    //    dependencies[.unitTests] = unitTestDependencies
-    //    self.requiredTargetTypes = requiredTargetTypes
-    // }
-    //
-    // internal init(name: String,
-    //              group: MicroFeatureGroup = .none,
-    //              additionalDependencies: [Module] = [],
-    //              exampleDependencies: [Module] = [],
-    //              requiredTargetTypes: RequiredTargetTypes = .defulatTargets) {
-    //
-    //    self.name = name
-    //    self.group = group
-    //    dependencies[.framework] = additionalDependencies
-    //    if !exampleDependencies.isEmpty {
-    //        dependencies[.exampleApp] = exampleDependencies
-    //    }
-    //    self.requiredTargetTypes = requiredTargetTypes
-    // }
-
     let name: String
     let group: MicroFeatureGroup
     var path: String {
@@ -73,15 +36,20 @@ public struct MicroFeature: HasReference, Hashable {
         }
     }
 
-    let platform: Platform = .iOS
-    let deploymentTarget: DeploymentTarget = .iOS(targetVersion: "15.0", devices: [.ipad, .iphone])
+    var platform: Platform {
+        GenerationConfig.default.platform
+    }
+
+    var deploymentTarget: DeploymentTarget {
+        GenerationConfig.default.deploymentTarget
+    }
 
     var requiredTargetTypes: RequiredTargetTypes
 }
 
 extension MicroFeature {
     var projectPath: String {
-        switch GenerationConfig.mode {
+        switch GenerationConfig.default.mode {
         case .singleProject:
             return path
         case .workspace:
@@ -89,12 +57,8 @@ extension MicroFeature {
         }
     }
 
-    var project: Project {
-        makeProject()
-    }
-
     var reference: TargetDependency {
-        switch GenerationConfig.mode {
+        switch GenerationConfig.default.mode {
         case .workspace:
             return .project(target: name, path: .relativeToRoot(path))
         case .singleProject:
@@ -124,7 +88,7 @@ extension MicroFeature {
 
     /// Helper function to create a framework target and an associated unit test target
     private func makeFeatureTargets(projectPath: String) -> [Target] {
-        let product: Product = GenerationConfig.linkType == .staticLink ? .staticFramework : .framework
+        let product: Product = GenerationConfig.default.linkType == .staticLink ? .staticFramework : .framework
 
         let resourceName: ResourceFileElements = requiredTargetTypes.hasResources(.framework) ?
             ["\(projectPath)/Targets/Sources/Assets/**"]
@@ -215,7 +179,7 @@ extension MicroFeature {
     }
 }
 
-extension String {
+private extension String {
     /// remove _ from String
     var validBundleId: String {
         replacingOccurrences(of: "_", with: "-")

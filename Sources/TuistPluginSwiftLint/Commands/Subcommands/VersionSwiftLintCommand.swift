@@ -8,7 +8,7 @@ extension MainCommand {
             commandName: "version-swiftlint",
             abstract: "Outputs the current version of SwiftLint."
         )
-        
+
         func run() throws {
             VersionSwiftLintService()
                 .run()

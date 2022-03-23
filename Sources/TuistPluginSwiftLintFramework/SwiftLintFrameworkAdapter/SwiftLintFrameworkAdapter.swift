@@ -11,24 +11,24 @@ public protocol SwiftLintFrameworkAdapting {
 public final class SwiftLintFrameworkAdapter: SwiftLintFrameworkAdapting {
     private let indexIncrementerQueue = DispatchQueue(label: "io.tuist.tuist-plugin-swiftlint.indexIncrementer")
     private let visitorMutationQueue = DispatchQueue(label: "io.tuist.tuist-plugin-swiftlint.lintVisitorMutation")
-    
-    public init() { }
-    
+
+    public init() {}
+
     public func lint(paths: [String], configurationFiles: [String], leniency: Leniency, quiet: Bool) {
         let configuration = Configuration(configurationFiles: configurationFiles)
         let reporter = reporterFrom(identifier: configuration.reporter)
         let cache = LinterCache(configuration: configuration)
         let storage = RuleStorage()
-        
+
         do {
             // Linting
             var violations: [StyleViolation] = []
-            
+
             let files = try getFiles(paths: paths, configuration: configuration, quiet: quiet)
             let groupedFiles = try groupFiles(files, configuration: configuration)
             let linters = linters(for: groupedFiles, cache: cache)
             let (collectedLinters, duplicateFileNames) = collect(linters: linters, storage: storage, duplicateFileNames: linters.duplicateFileNames, configuration: configuration, quiet: quiet)
-            
+
             let visitedFiles = visit(
                 linters: collectedLinters,
                 storage: storage,
@@ -39,24 +39,24 @@ public final class SwiftLintFrameworkAdapter: SwiftLintFrameworkAdapting {
                     let currentViolations = linter
                         .styleViolations(using: storage)
                         .applyingLeniency(leniency)
-                    
+
                     visitorMutationQueue.sync {
                         violations += currentViolations
                     }
-                    
+
                     linter.file.invalidateCache()
                     currentViolations.report(with: reporter, realtimeCondition: true)
                 }
             )
-            
+
             // post processing
             if let warningThreshold = configuration.warningThreshold, violations.isWarningThresholdBroken(warningThreshold: warningThreshold), leniency != .lenient {
                 let thresholdViolation = StyleViolation.createThresholdViolation(threshold: warningThreshold)
-                
+
                 violations.append(thresholdViolation)
                 [thresholdViolation].report(with: reporter, realtimeCondition: true)
             }
-            
+
             violations.report(with: reporter, realtimeCondition: false)
             let numberOfSeriousViolations = violations.numberOfViolations(severity: .error)
             if !quiet {
@@ -71,9 +71,9 @@ public final class SwiftLintFrameworkAdapter: SwiftLintFrameworkAdapting {
             #warning("Handle errors")
         }
     }
-    
+
     // MARK: - Helpers - Linting
-    
+
     private func getFiles(paths: [String], configuration: Configuration, quiet: Bool) throws -> [SwiftLintFile] {
         if !quiet {
             let filesInfo: String
@@ -85,18 +85,18 @@ public final class SwiftLintFrameworkAdapter: SwiftLintFrameworkAdapting {
 
             queuedPrintError("Linting Swift files \(filesInfo)")
         }
-        
+
         return paths.flatMap {
             configuration.lintableFiles(inPath: $0, forceExclude: false)
         }
     }
-    
+
     private func groupFiles(
         _ files: [SwiftLintFile],
         configuration: Configuration
     ) throws -> [Configuration: [SwiftLintFile]] {
         var groupedFiles = [Configuration: [SwiftLintFile]]()
-        
+
         files.forEach { file in
             let fileConfiguration = configuration.configuration(for: file)
             let fileConfigurationRootPath = fileConfiguration.rootDirectory.bridge()
@@ -116,7 +116,7 @@ public final class SwiftLintFrameworkAdapter: SwiftLintFrameworkAdapting {
 
         return groupedFiles
     }
-    
+
     private func linters(
         for filesPerConfiguration: [Configuration: [SwiftLintFile]],
         cache: LinterCache
@@ -129,10 +129,10 @@ public final class SwiftLintFrameworkAdapter: SwiftLintFrameworkAdapting {
             let newConfig = config.withPrecomputedCacheDescription()
             linters += files.map { Linter(file: $0, configuration: newConfig, cache: cache) }
         }
-        
+
         return linters
     }
-    
+
     private func collect(
         linters: [Linter],
         storage: RuleStorage,
@@ -141,7 +141,7 @@ public final class SwiftLintFrameworkAdapter: SwiftLintFrameworkAdapting {
         quiet: Bool
     ) -> ([CollectedLinter], Set<String>) {
         var collected = 0
-        let total = linters.filter({ $0.isCollecting }).count
+        let total = linters.filter { $0.isCollecting }.count
         let collect = { [indexIncrementerQueue] (linter: Linter) -> CollectedLinter? in
             if !quiet, linter.isCollecting, let filePath = linter.file.path {
                 let outputFilename = outputFilename(for: filePath, duplicateFileNames: duplicateFileNames, configuration: configuration)
@@ -149,7 +149,7 @@ public final class SwiftLintFrameworkAdapter: SwiftLintFrameworkAdapting {
                     collected += 1
                     queuedPrintError("Collecting '\(outputFilename)' (\(collected)/\(total))")
                 }
-                
+
                 indexIncrementerQueue.sync(execute: increment)
             }
 
@@ -159,13 +159,13 @@ public final class SwiftLintFrameworkAdapter: SwiftLintFrameworkAdapting {
         }
 
         let collectedLinters = linters.parallelCompactMap(transform: collect)
-        
+
         return (collectedLinters, duplicateFileNames)
     }
-    
+
     private func visit(
         linters: [CollectedLinter],
-        storage: RuleStorage,
+        storage _: RuleStorage,
         duplicateFileNames: Set<String>,
         configuration: Configuration,
         quiet: Bool,
@@ -179,7 +179,7 @@ public final class SwiftLintFrameworkAdapter: SwiftLintFrameworkAdapting {
                     visited += 1
                     queuedPrintError("Linting '\(outputFilename)' (\(visited)/\(linters.count))")
                 }
-                
+
                 indexIncrementerQueue.sync(execute: increment)
             }
 

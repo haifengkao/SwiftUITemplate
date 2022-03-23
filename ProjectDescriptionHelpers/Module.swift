@@ -8,10 +8,6 @@
 import Foundation
 import ProjectDescription
 
-protocol HasSwiftPackage {
-    var package: Package { get }
-}
-
 typealias Modules = Set<Module>
 
 extension Modules {
@@ -42,10 +38,6 @@ public enum Module: Hashable {
     }
 
     public var project: Project {
-        if let code = uFeature {
-            return code.project
-        }
-
         fatalError("\(self) project not implemented")
     }
 

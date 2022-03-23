@@ -8,7 +8,7 @@ extension MainCommand {
             commandName: "version",
             abstract: "Outputs the current version of the plugin."
         )
-        
+
         func run() throws {
             VersionService()
                 .run()

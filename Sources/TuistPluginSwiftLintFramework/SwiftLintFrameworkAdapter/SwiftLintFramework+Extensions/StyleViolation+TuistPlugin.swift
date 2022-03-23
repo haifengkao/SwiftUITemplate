@@ -23,7 +23,7 @@ extension StyleViolation {
             }
         }
     }
-    
+
     /// Creates "number of warnings exceeded threshold" violation.
     static func createThresholdViolation(threshold: Int) -> StyleViolation {
         let description = RuleDescription(
@@ -32,7 +32,7 @@ extension StyleViolation {
             description: "Number of warnings thrown is above the threshold.",
             kind: .lint
         )
-        
+
         return StyleViolation(
             ruleDescription: description,
             severity: .error,
@@ -47,17 +47,17 @@ extension Array where Element == StyleViolation {
     func numberOfViolations(severity: ViolationSeverity) -> Int {
         filter { $0.severity == severity }.count
     }
-    
+
     /// Upgrades/Downgrades the list of violations depends on the given leniency.
     func applyingLeniency(_ leniency: Leniency) -> [Element] {
         map { $0.applyingLeniency(leniency) }
     }
-    
+
     /// Checks if number of warnings exceeds threshold.
     func isWarningThresholdBroken(warningThreshold: Int) -> Bool {
         numberOfViolations(severity: .warning) >= warningThreshold
     }
-    
+
     /// Returns a summary message for the list of violations.
     func generateSummary(numberOfFiles: Int, numberOfSeriousViolations: Int) -> String {
         """
@@ -65,7 +65,7 @@ extension Array where Element == StyleViolation {
         \(numberOfSeriousViolations) serious in \(numberOfFiles) file\(numberOfFiles.pluralSuffix).
         """
     }
-    
+
     /// Generates and prints report from violations using the given reporter.
     func report(with reporter: Reporter.Type, realtimeCondition: Bool) {
         if reporter.isRealtime == realtimeCondition {

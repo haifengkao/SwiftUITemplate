@@ -5,20 +5,25 @@
 //  Created by Hai Feng Kao on 2022/1/7.
 //
 
-import Foundation
+import ProjectDescription
 
-enum GenerationMode {
-    case workspace
-    case singleProject
+public enum GenerationMode {
+    case workspace /// make each uFeature as a project, and whole app as single workspace, TODO: broken
+    case singleProject /// make each uFeature as a target, and whole app as single project
 }
 
-enum LinkType {
+public enum LinkType {
     case staticLink
-    case dynamicLink // dynamic framework will cause CombineRex and JsonValue2 to report duplicated link warning (why?
+    case dynamicLink
 }
 
-/// Config for Workspace or Project generation
-enum GenerationConfig {
-    static let mode: GenerationMode = .singleProject
-    static let linkType: LinkType = .staticLink
+/// Config settings for project generation
+public struct GenerationConfig {
+    public var mode: GenerationMode = .singleProject
+    public var linkType: LinkType = .staticLink
+
+    public var platform: Platform = .iOS
+    public var deploymentTarget: DeploymentTarget = .iOS(targetVersion: "15.0", devices: [.ipad, .iphone])
+
+    public static var `default`: Self = .init()
 }

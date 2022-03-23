@@ -11,11 +11,11 @@ let package = Package(
             name: "tuist-lint",
             targets: ["TuistPluginSwiftLint"]
         ),
-        
+
         .library(
             name: "SwiftUITemplateHelpers",
             targets: ["SwiftUITemplateHelpers"]
-        )
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/tuist/ProjectAutomation", .exact("3.0.1")),
@@ -43,12 +43,11 @@ let package = Package(
                 "TuistPluginSwiftLintFramework",
             ]
         ),
-        
-            .target(
-                name: "SwiftUITemplateHelpers",
-                dependencies: [
-                    
-                ], path: "ProjectDescriptionHelpers"
-            ),
+
+        .target(
+            name: "SwiftUITemplateHelpers",
+            dependencies: [
+            ], path: "ProjectDescriptionHelpers"
+        ),
     ]
 )

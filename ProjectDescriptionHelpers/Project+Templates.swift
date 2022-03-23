@@ -1,27 +1,9 @@
-import FileResourceGen // plugin
 import ProjectDescription
 
 /// Project helpers are functions that simplify the way you define your project.
 /// Share code to create targets, settings, dependencies,
 /// Create your own conventions, e.g: a func that makes sure all shared targets are "static frameworks"
 /// See https://docs.tuist.io/guides/helpers/
-
-public extension Project {
-    static func merged(name: String, modules: [Module], additionalFiles: [FileElement]) -> Project {
-        return make(name: name, packages: modules.allPackageDescendentDependencies.map(\.package), targets: modules.allProjectTargets, additionalFiles: additionalFiles)
-    }
-
-    static func make(name: String, packages: [Package], targets: [Target], additionalFiles: [FileElement] = []) -> Project {
-        Project(name: name,
-                organizationName: "com.howgeli",
-                packages: packages,
-                targets: targets.sorted(by: { lhs, rhs in
-                    lhs.name < rhs.name
-                }),
-                additionalFiles: additionalFiles,
-                resourceSynthesizers: [.fileResourceGen(["json", "zip", "data"]), .assetGen()])
-    }
-}
 
 extension Array: HasAllPackageDescendentDependency where Element == Module {
     var allPackageDescendentDependencies: SwiftPackages {
@@ -30,12 +12,32 @@ extension Array: HasAllPackageDescendentDependency where Element == Module {
         }
     }
 
-    var allProjectTargets: [Target] {
+    public var allSwiftPacakges: [Package] {
+        allPackageDescendentDependencies.map(\.package)
+    }
+
+    public var allTargetSettings: TargetSetting {
+        let targetSettings = allPackageDescendentDependencies.map(\.targetSetting)
+
+        return targetSettings.reduce(into: [:]) { partialResult, targetSetting in
+            partialResult.merge(targetSetting) { _, _ in
+                fatalError("should not have duplicated target name")
+                // return lhs
+            }
+        }
+    }
+}
+
+extension Array: HasAllProjectTargets where Element == Module {
+    public var allProjectTargets: [Target] {
         let targets = reduce(into: []) { partialResult, module in
             partialResult += module.allProjectTargets
         }.uniques(by: \.bundleId)
 
-        return targets
+        // sorted targets are easier to find in Xcode
+        return targets.sorted(by: { lhs, rhs in
+            lhs.name < rhs.name
+        })
     }
 }
 
