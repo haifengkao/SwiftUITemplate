@@ -8,7 +8,7 @@
 import Foundation
 import ProjectDescription
 
-typealias Modules = Set<Module>
+public typealias Modules = Set<Module>
 
 extension Modules {
     static func + (_ lhs: Self, _ rhs: Self) -> Self {
@@ -50,8 +50,12 @@ public enum Module: Hashable {
     }
 }
 
-extension Module {
+public extension Module {
     static func uFeature(name: String, group: MicroFeatureGroup = .none, targets: [RequiredTargetType: TargetConfig]) -> Self {
         .uFeature(.init(name: name, group: group, requiredTargetTypes: .init(configs: targets)))
+    }
+
+    static func package(name: String, url: String, requirement: Package.Requirement) -> Self {
+        .package(.init(name: name, url: url, requirement: requirement))
     }
 }

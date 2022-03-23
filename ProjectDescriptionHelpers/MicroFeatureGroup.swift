@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum MicroFeatureGroup: String {
+public enum MicroFeatureGroup: String {
     case none
     case infrastructure = "Infrastructure"
     case applicationServices = "ApplicationServices"

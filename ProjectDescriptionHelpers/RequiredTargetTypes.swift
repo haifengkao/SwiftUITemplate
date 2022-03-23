@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum RequiredTargetType: Hashable {
+public enum RequiredTargetType: Hashable {
     case framework
     case unitTests
     case exampleApp

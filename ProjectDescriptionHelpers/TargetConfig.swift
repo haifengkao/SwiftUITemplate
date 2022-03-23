@@ -7,22 +7,22 @@
 
 import Foundation
 
-struct TargetConfig: Hashable {
+public struct TargetConfig: Hashable {
     let hasResources: Bool
     let hasHeader: Bool = false
     let modules: Modules
 }
 
-extension TargetConfig {
-    static func modules(_ modules: Modules) -> Self {
+public extension TargetConfig {
+    static func hasDependencies(_ modules: Modules) -> Self {
         .init(hasResources: false, modules: modules)
     }
 
-    static func resourcesWithModules(_ modules: Modules) -> Self {
+    static func hasResourcesAndDependencies(_ modules: Modules) -> Self {
         .init(hasResources: true, modules: modules)
     }
 
     static let resourcesOnly: Self = .init(hasResources: true, modules: [])
 
-    static let empty: Self = .init(hasResources: false, modules: [])
+    static let `default`: Self = .init(hasResources: false, modules: [])
 }

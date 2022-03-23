@@ -1,8 +1,6 @@
-import SwiftUITemplate
-
 import ProjectDescription
-
 import ProjectDescriptionHelpers
+import SwiftUITemplate
 
 let project: Project = {
     GenerationConfig.default.platform = platform
