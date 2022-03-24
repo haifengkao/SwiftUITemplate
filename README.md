@@ -32,8 +32,8 @@ An app is composed by **mutiple microfeatures**. Each `microfeature` contains
 
 A `module` might be `microfeature` or a swift package (Cocoapods and Carthage are not supported, PR welcome).
 
-To add a `microfeature`, create `Tuist/ProjectDescriptionHelpers/Modules.swift`.
-Then add the `microfeature` to `modules`, e.g.
+To add a microfeature, create `Tuist/ProjectDescriptionHelpers/Modules.swift`.
+Then add the microfeature to `modules`, e.g.
 ```swift
 import ProjectDescription
 import SwiftUITemplate
@@ -53,6 +53,12 @@ public let modules: [Module] = [
     Module.Nimble,
 ]
 ```
+
+You can specify 4 different kinds of targets:
+* `.framework` the framework codes which other modules can depend on
+* `.unitTests` the unit test target to test the framework
+* `.exampleApp` the example target 
+* `.uiTests` the ui test target which will run over example app
 
 By default, `SwiftUITemplate` uses [Nimble](https://github.com/Quick/Nimble) and [Quick](https://github.com/Quick/Quick) as the unit test framework. It's mandatory to include `Nimble` and `Quick` for the unit test placeholder codes to compile
 
@@ -123,13 +129,14 @@ To generate the `.xcworkspace`
 2. run `tuist generate` to generate xcworkspace
 
 If the above procedure doesn't work, please check [Tuist tutorial](https://docs.tuist.io/tutorial/get-started) for more info.
+
 ## TargetConfig
 `TargetConfig` has four modes
 
-* `default` indicates the target has no resources to include and no dependencies to other modules
-* `resourcesOnly` indicates the target has resources but no dependencies
-* `hasDependencies([Modules])` let you specify the target's dependencies
-* `hasResourcesAndDependencies([Modules])` indicates the target has resources and dependencies
+* `.default` indicates the target has no resources to include and no dependencies to other modules
+* `.resourcesOnly` indicates the target has resources but no dependencies
+* `.hasDependencies([Modules])` let you specify the target's dependencies
+* `.hasResourcesAndDependencies([Modules])` indicates the target has resources and dependencies
 
 
 ## File structure
