@@ -54,14 +54,25 @@ public let modules: [Module] = [
 ]
 ```
 
+#### RequiredTargetType
 You can specify 4 different kinds of targets:
 * `.framework` the framework codes which other modules can depend on
 * `.unitTests` the unit test target to test the framework
 * `.exampleApp` the example target 
 * `.uiTests` the ui test target which will run over example app
 
+#### TargetConfig
+`TargetConfig` has four modes
+
+* `.default` indicates the target has no resources to include and no dependencies to other modules
+* `.resourcesOnly` indicates the target has resources but no dependencies
+* `.hasDependencies([Modules])` let you specify the target's dependencies
+* `.hasResourcesAndDependencies([Modules])` indicates the target has resources and dependencies
+
+#### Default Swift Packages
 By default, `SwiftUITemplate` uses [Nimble](https://github.com/Quick/Nimble) and [Quick](https://github.com/Quick/Quick) as the unit test framework. It's mandatory to include `Nimble` and `Quick` for the unit test placeholder codes to compile
 
+#### Project Setting
 You can specify project name and the targets in `Project.swift`.
 ```swift
 import ProjectDescription
@@ -75,6 +86,7 @@ let project: Project = Project(name: "MyApp",
 
 `modules.allProjectTargets` tells `tuist` to include all targets(exampleApp, unit test, frameworks) into the generated project.
 
+#### Dependency Management
 To include swift packages, we can create a swift package with `.package`.
 The following example adds `Alamofire` into `MyApp`'s framework traget.
 ```swift
@@ -129,14 +141,6 @@ To generate the `.xcworkspace`
 2. run `tuist generate` to generate xcworkspace
 
 If the above procedure doesn't work, please check [Tuist tutorial](https://docs.tuist.io/tutorial/get-started) for more info.
-
-## TargetConfig
-`TargetConfig` has four modes
-
-* `.default` indicates the target has no resources to include and no dependencies to other modules
-* `.resourcesOnly` indicates the target has resources but no dependencies
-* `.hasDependencies([Modules])` let you specify the target's dependencies
-* `.hasResourcesAndDependencies([Modules])` indicates the target has resources and dependencies
 
 
 ## File structure
