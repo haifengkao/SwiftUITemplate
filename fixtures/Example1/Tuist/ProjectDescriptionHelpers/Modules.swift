@@ -15,6 +15,16 @@ private extension Module {
             .unitTests: .default,
             .framework: .hasDependencies([
                 .Alamofire,
+                .MyFeature1
+            ]),
+        ])
+    }
+    
+    static var MyFeature1: Module {
+        .uFeature(name: "MyFeature1", targets: [
+            .exampleApp: .resourcesOnly,
+            .unitTests: .default,
+            .framework: .hasDependencies([
             ]),
         ])
     }

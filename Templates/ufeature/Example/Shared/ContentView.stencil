@@ -1,0 +1,24 @@
+//
+//  ContentView.swift
+//  {{ name }}
+//
+//  Created by {{ author }} on {{ date }}.
+{% if company != "" %}
+//  Copyright © {{ year }} {{ company }}. All rights reserved.
+{% endif %}
+//
+
+import SwiftUI
+
+struct ContentView: View {
+    var body: some View {
+        Text("Hello, world!")
+            .padding()
+    }
+}
+
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
+}

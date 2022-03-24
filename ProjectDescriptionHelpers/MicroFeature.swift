@@ -30,9 +30,9 @@ public struct MicroFeature: HasReference, Hashable {
     let group: MicroFeatureGroup
     var path: String {
         if group != .none {
-            return "Projects/" + group.rawValue + "/" + name
+            return GenerationConfig.default.featuresRootPath + group.rawValue + "/" + name
         } else {
-            return "Projects/" + name
+            return GenerationConfig.default.featuresRootPath + name
         }
     }
 
@@ -91,13 +91,13 @@ extension MicroFeature {
         let product: Product = GenerationConfig.default.linkType == .staticLink ? .staticFramework : .framework
 
         let resourceName: ResourceFileElements = requiredTargetTypes.hasResources(.framework) ?
-            ["\(projectPath)/Targets/Sources/Assets/**"]
+            ["\(projectPath)/Sources/Assets/**"]
             :
             []
 
         let header: Headers? = requiredTargetTypes.hasHeader(.framework) ? .headers(
-            public: "\(projectPath)/Targets/Sources/\(name)/PublicHeader/**",
-            private: "\(projectPath)/Targets/Sources/\(name)/PrivateHeader/**",
+            public: "\(projectPath)/Sources/\(name)/PublicHeader/**",
+            private: "\(projectPath)/Sources/\(name)/PrivateHeader/**",
             project: nil
         ) : nil
         let sources = Target(name: name,
@@ -106,7 +106,7 @@ extension MicroFeature {
                              bundleId: "io.tuist.\(name)".validBundleId,
                              deploymentTarget: deploymentTarget,
                              infoPlist: .default,
-                             sources: ["\(projectPath)/Targets/Sources/\(name)/**"],
+                             sources: ["\(projectPath)/Sources/\(name)/**"],
                              resources: resourceName, // resources provided by feature, e.g. ManResouces
                              headers: header,
                              dependencies: dependentReferences(types: [.framework]))
@@ -114,7 +114,7 @@ extension MicroFeature {
         if !requiredTargetTypes.contains(.unitTests) { return [sources] }
 
         let testResourceName: ResourceFileElements = requiredTargetTypes.hasResources(.unitTests) ?
-            ["\(projectPath)/Targets/Tests/Assets/**"]
+            ["\(projectPath)/Tests/Assets/**"]
             :
             []
 
@@ -129,7 +129,7 @@ extension MicroFeature {
                            bundleId: "io.tuist.\(name)Tests".validBundleId,
                            deploymentTarget: deploymentTarget,
                            infoPlist: .default,
-                           sources: ["\(projectPath)/Targets/Tests/**/*.swift"],
+                           sources: ["\(projectPath)/Tests/**/*.swift"],
                            resources: testResourceName, // resources for testing, e.g. WebOperationContextTest
                            dependencies: testDependencies)
         return [sources, tests]
@@ -155,8 +155,8 @@ extension MicroFeature {
             bundleId: "io.tuist.\(exampleName)".validBundleId,
             deploymentTarget: deploymentTarget,
             infoPlist: .extendingDefault(with: infoPlist),
-            sources: ["\(projectPath)/Targets/Example/Shared/**"],
-            resources: ["\(projectPath)/Targets/Example/Shared/*.xcassets"],
+            sources: ["\(projectPath)/Example/Shared/**"],
+            resources: ["\(projectPath)/Example/Shared/*.xcassets"],
             dependencies: dependentReferences(types: [.exampleApp]) + [.target(name: name)] // need to reference the framework target
         )
 
@@ -168,7 +168,7 @@ extension MicroFeature {
                              bundleId: "io.tuist.\(name)UITests\(platform)".validBundleId,
                              deploymentTarget: deploymentTarget,
                              infoPlist: .default,
-                             sources: ["\(projectPath)/Targets/Example/Tests \(platform)/**/*.swift"],
+                             sources: ["\(projectPath)/Example/Tests \(platform)/**/*.swift"],
                              resources: [], // resources for testing, e.g. WebOperationContextTest
                              dependencies: [.target(name: exampleName),
                                             .external(name: "Nimble"),

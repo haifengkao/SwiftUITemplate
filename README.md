@@ -149,11 +149,12 @@ If the above procedure doesn't work, please check [Tuist tutorial](https://docs.
 ```
 All features are located in `Features` folder. `SwiftUITemplate` will find corresponding codes and resources in the predefined subfolders.
 
-This plugin provides a command to create a microfeature's placeholder files (unimplemented).
+This plugin provides templates to create a microfeature placeholder files
 
 ```bash
-tuist swiftui create MyFeature1
+tuist scaffold ufeature --name MyFeature1 --company TuistDemo
 ```
+It will create `MyFeature1` in `Features` folder.
 
 ## Contribute
 
@@ -161,5 +162,5 @@ To start working on the project, you can follow the steps below:
 1. Clone the project.
 2. cd `fixtures/Example1`
 3. `tuist fetch` to install the plugin
-3. `tuist edit` to add new modules
-4. `tuist generate` to generate xcworkspace
+3. `tuist edit` to add new modules or modify the plugin files
+4. `tuist generate` to generate the example xcworkspace

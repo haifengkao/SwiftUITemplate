@@ -24,6 +24,6 @@ public struct GenerationConfig {
 
     public var platform: Platform = .iOS
     public var deploymentTarget: DeploymentTarget = .iOS(targetVersion: "15.0", devices: [.ipad, .iphone])
-
+    public var featuresRootPath: String = "Features/"
     public static var `default`: Self = .init()
 }
