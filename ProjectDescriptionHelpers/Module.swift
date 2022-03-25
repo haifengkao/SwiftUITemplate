@@ -51,7 +51,7 @@ public enum Module: Hashable {
 }
 
 public extension Module {
-    static func uFeature(name: String, group: MicroFeatureGroup = .none, targets: [RequiredTargetType: TargetConfig]) -> Self {
+    static func uFeature(name: String, group: MicroFeatureGroup = nil, targets: [RequiredTargetType: TargetConfig]) -> Self {
         .uFeature(.init(name: name, group: group, requiredTargetTypes: .init(configs: targets)))
     }
 

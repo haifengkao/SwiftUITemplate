@@ -16,7 +16,7 @@ public struct MicroFeature: HasReference, Hashable {
     }
 
     internal init(name: String,
-                  group: MicroFeatureGroup = .none,
+                  group: MicroFeatureGroup,
                   additionalDependencies: Modules = [])
     {
         self.init(name: name, group: group, requiredTargetTypes: .init(configs: [
@@ -29,8 +29,8 @@ public struct MicroFeature: HasReference, Hashable {
     let name: String
     let group: MicroFeatureGroup
     var path: String {
-        if group != .none {
-            return GenerationConfig.default.featuresRootPath + group.rawValue + "/" + name
+        if let group = group {
+            return GenerationConfig.default.featuresRootPath + group + "/" + name
         } else {
             return GenerationConfig.default.featuresRootPath + name
         }
@@ -130,7 +130,7 @@ extension MicroFeature {
                            deploymentTarget: deploymentTarget,
                            infoPlist: .default,
                            sources: ["\(projectPath)/Tests/**/*.swift"],
-                           resources: testResourceName, // resources for testing, e.g. WebOperationContextTest
+                           resources: testResourceName, // resources for testing
                            dependencies: testDependencies)
         return [sources, tests]
     }
@@ -169,7 +169,7 @@ extension MicroFeature {
                              deploymentTarget: deploymentTarget,
                              infoPlist: .default,
                              sources: ["\(projectPath)/Example/Tests \(platform)/**/*.swift"],
-                             resources: [], // resources for testing, e.g. WebOperationContextTest
+                             resources: [], // resources for testing
                              dependencies: [.target(name: exampleName),
                                             .external(name: "Nimble"),
                                             .external(name: "Quick")]

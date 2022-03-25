@@ -7,10 +7,5 @@
 
 import Foundation
 
-public enum MicroFeatureGroup: String {
-    case none
-    case infrastructure = "Infrastructure"
-    case applicationServices = "ApplicationServices"
-    case utilities = "Utilities"
-    case common = "Common"
-}
+public typealias MicroFeatureGroup = Optional<String>
+
