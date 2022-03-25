@@ -12,7 +12,7 @@ import ProjectDescription
 
 let config = Config(
     plugins: [
-        .git(url: "https://github.com/haifengkao/SwiftUITemplate", tag: "0.2.0")
+        .git(url: "https://github.com/haifengkao/SwiftUITemplate", tag: "0.3.0")
     ]
 )
 ```
@@ -58,7 +58,7 @@ public let modules: [Module] = [
 You can specify 4 different kinds of targets:
 * `.framework` the framework codes which other modules can depend on
 * `.unitTests` the unit test target to test the framework
-* `.exampleApp` the example target 
+* `.exampleApp` the example target
 * `.uiTests` the ui test target which will run over example app
 
 #### TargetConfig
