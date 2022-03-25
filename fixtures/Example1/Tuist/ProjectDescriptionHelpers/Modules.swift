@@ -16,11 +16,11 @@ private extension Module {
             .framework: .hasDependencies([
                 .Alamofire,
                 .MyFeature1,
-                .MyInfrastructureCode
+                .MyInfrastructureCode,
             ]),
         ])
     }
-    
+
     static var MyFeature1: Module {
         .uFeature(name: "MyFeature1", targets: [
             .exampleApp: .resourcesOnly,
@@ -29,17 +29,17 @@ private extension Module {
             ]),
         ])
     }
-    
+
     /// hierarchical feature directory
     static var MyInfrastructureCode: Module {
         .uFeature(name: "MyInfrastructureCode",
                   group: MicroFeatureGroup.infrastructure.rawValue,
                   targets: [
-            .exampleApp: .resourcesOnly,
-            .unitTests: .default,
-            .framework: .hasDependencies([
-            ]),
-        ])
+                      .exampleApp: .resourcesOnly,
+                      .unitTests: .default,
+                      .framework: .hasDependencies([
+                      ]),
+                  ])
     }
 
     static var Alamofire: Module {
@@ -54,7 +54,6 @@ public let modules: [Module] = [
 ]
 
 public let platform: Platform = .iOS
-
 
 enum MicroFeatureGroup: String {
     case infrastructure = "Infrastructure"

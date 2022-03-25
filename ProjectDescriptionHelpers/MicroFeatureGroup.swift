@@ -8,4 +8,3 @@
 import Foundation
 
 public typealias MicroFeatureGroup = Optional<String>
-
