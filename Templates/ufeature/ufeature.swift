@@ -57,7 +57,7 @@ let template = Template(
         ),
         .directory(
             path: "\(rootPath)/\(nameAttribute)/Sources/\(nameAttribute)",
-            sourcePath: "Sources/uFeatureName"
+            sourcePath: "Sources/uFeatureName/ReplaceMe.swift/"
         ),
         .directory(
             path: "\(rootPath)/\(nameAttribute)/Example/Shared/Assets.xcassets",
