@@ -96,8 +96,8 @@ extension MicroFeature {
             []
 
         let header: Headers? = requiredTargetTypes.hasHeader(.framework) ? .headers(
-            public: "\(projectPath)/Sources/\(name)/PublicHeader/**",
-            private: "\(projectPath)/Sources/\(name)/PrivateHeader/**",
+            public: "\(projectPath)/Sources/PublicHeader/**",
+            private: "\(projectPath)/Sources/PrivateHeader/**",
             project: nil
         ) : nil
         let sources = Target(name: name,
@@ -106,7 +106,7 @@ extension MicroFeature {
                              bundleId: "io.tuist.\(name)".validBundleId,
                              deploymentTarget: deploymentTarget,
                              infoPlist: .default,
-                             sources: ["\(projectPath)/Sources/\(name)/**"],
+                             sources: ["\(projectPath)/Sources/**"],
                              resources: resourceName, // resources provided by feature, e.g. ManResouces
                              headers: header,
                              dependencies: dependentReferences(types: [.framework]))
@@ -129,7 +129,7 @@ extension MicroFeature {
                            bundleId: "io.tuist.\(name)Tests".validBundleId,
                            deploymentTarget: deploymentTarget,
                            infoPlist: .default,
-                           sources: ["\(projectPath)/Tests/**/*.swift"],
+                           sources: ["\(projectPath)/Tests/**"],
                            resources: testResourceName, // resources for testing
                            dependencies: testDependencies)
         return [sources, tests]
@@ -168,7 +168,7 @@ extension MicroFeature {
                              bundleId: "io.tuist.\(name)UITests\(platform)".validBundleId,
                              deploymentTarget: deploymentTarget,
                              infoPlist: .default,
-                             sources: ["\(projectPath)/Example/Tests \(platform)/**/*.swift"],
+                             sources: ["\(projectPath)/Example/Tests \(platform)/**"],
                              resources: [], // resources for testing
                              dependencies: [.target(name: exampleName),
                                             .external(name: "Nimble"),
