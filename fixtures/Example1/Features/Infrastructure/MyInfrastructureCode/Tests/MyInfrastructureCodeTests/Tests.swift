@@ -11,8 +11,15 @@ import MyInfrastructureCode
 import Nimble
 import Quick
 
+func awaitTest() async -> Int {
+    return 1
+}
 class TableOfContentsSpec: QuickSpec {
     override func spec() {
+        it("can call async func") {
+            let a = await awaitTest()
+            await expect(a) == 1
+        }
         xdescribe("these will fail") {
             it("can do maths") {
                 expect(1) == 2

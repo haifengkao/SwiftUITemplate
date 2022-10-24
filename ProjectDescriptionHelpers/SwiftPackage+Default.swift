@@ -9,10 +9,10 @@ import Foundation
 
 public extension Module {
     static var Quick: Module {
-        .package(.init(name: "Quick", url: "https://github.com/Quick/Quick", requirement: .upToNextMajor(from: "5.0.0"), unitTestTool: true))
+        .package(.init(name: "Quick", url: "https://github.com/Quick/Quick", requirement: .branch("main"), unitTestTool: true))
     }
 
     static var Nimble: Module {
-        .package(.init(name: "Nimble", url: "https://github.com/Quick/Nimble", requirement: .upToNextMajor(from: "10.0.0"), unitTestTool: true))
+        .package(.init(name: "Nimble", url: "https://github.com/Quick/Nimble", requirement: .branch("main"), unitTestTool: true))
     }
 }
