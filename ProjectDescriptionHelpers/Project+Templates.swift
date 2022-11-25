@@ -13,7 +13,14 @@ extension Array: HasAllPackageDescendentDependency where Element == Module {
     }
 
     public var allSwiftPacakges: [Package] {
-        allPackageDescendentDependencies.map(\.package)
+        let packages = allPackageDescendentDependencies
+        let uniques = Set(packages.uniques(by: \.url))
+        
+        if uniques.count != packages.count {
+            print("warning: ignore duplicated ", packages.subtracting(uniques))
+        }
+        
+        return uniques.map(\.package)
     }
 
     public var allTargetSettings: TargetSetting {
@@ -71,6 +78,23 @@ extension Module: HasAllPackageDescendentDependency {
             return microFeature.allPackageDescendentDependencies
         case let .package(swiftPackage):
             return [swiftPackage]
+        }
+    }
+}
+
+
+private extension Sequence {
+    func uniques<T: Hashable>(by key: KeyPath<Element, T>) -> [Element] {
+        var added = Set<T>()
+        return filter {
+            elem in
+            let keyValue = elem[keyPath: key]
+            if !added.contains(keyValue) {
+                added.insert(keyValue)
+                return true
+            }
+
+            return false
         }
     }
 }
