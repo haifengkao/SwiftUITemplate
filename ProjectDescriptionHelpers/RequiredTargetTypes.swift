@@ -61,7 +61,7 @@ struct RequiredTargetTypes: Hashable {
         configs[type]?.modules ?? []
     }
 
-    // static var deflautTargets: Self = .init(types: .defulatTargets, hasResources: .empty)
+    // static var defaultTargets: Self = .init(types: .defaultTargets, hasResources: .empty)
     // static var withExample: Self = .init(types: .withExample, hasResources: .empty)
     // static var withUItests: Self = .init(types: .withUItests, hasResources: .empty)
     // static var unitTestOnly: Self = .init(types: .unitTestOnly, hasResources: .empty)
@@ -90,7 +90,7 @@ extension RequiredTargetTypes: PackageDependencyProviding {
 
 extension Set where Element == RequiredTargetType {
     /// uiTests is not enabled by default
-    static var defulatTargets: Set<RequiredTargetType> = .unitTestOnly
+    static var defaultTargets: Set<RequiredTargetType> = .unitTestOnly
 
     static var withExample: Set<RequiredTargetType> = [.framework, .unitTests, .exampleApp]
 

@@ -5,7 +5,7 @@ import SwiftUITemplate
 
 let dependencies = Dependencies(
     swiftPackageManager: .init(
-        modules.allSwiftPacakges,
+        modules.allSwiftPackages,
 
         targetSettings: modules.allTargetSettings
     ),

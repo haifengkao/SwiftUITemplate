@@ -12,14 +12,14 @@ extension Array: HasAllPackageDescendentDependency where Element == Module {
         }
     }
 
-    public var allSwiftPacakges: [Package] {
+    public var allSwiftPackages: [Package] {
         let packages = allPackageDescendentDependencies
         let uniques = Set(packages.uniques(by: \.url))
-        
+
         if uniques.count != packages.count {
             print("warning: ignore duplicated ", packages.subtracting(uniques))
         }
-        
+
         return uniques.map(\.package)
     }
 
@@ -81,7 +81,6 @@ extension Module: HasAllPackageDescendentDependency {
         }
     }
 }
-
 
 private extension Sequence {
     func uniques<T: Hashable>(by key: KeyPath<Element, T>) -> [Element] {
