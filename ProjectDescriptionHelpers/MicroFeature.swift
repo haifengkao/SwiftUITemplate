@@ -28,6 +28,7 @@ public struct MicroFeature: HasReference, Hashable {
 
     let name: String
     let group: MicroFeatureGroup
+
     var path: String {
         if let group = group {
             return GenerationConfig.default.featuresRootPath + group + "/" + name
@@ -100,16 +101,18 @@ extension MicroFeature {
             private: "\(projectPath)/Sources/PrivateHeader/**",
             project: nil
         ) : nil
-        let sources = Target(name: name,
-                             platform: platform,
-                             product: product,
-                             bundleId: "io.tuist.\(name)".validBundleId,
-                             deploymentTarget: deploymentTarget,
-                             infoPlist: .default,
-                             sources: ["\(projectPath)/Sources/**"],
-                             resources: resourceName, // resources provided by feature, e.g. ManResouces
-                             headers: header,
-                             dependencies: dependentReferences(types: [.framework]))
+
+        let targetPostProcessor = requiredTargetTypes.targetPostProcessor(.framework)
+        let sources = targetPostProcessor(Target(name: name,
+                                                 platform: platform,
+                                                 product: product,
+                                                 bundleId: "io.tuist.\(name)".validBundleId,
+                                                 deploymentTarget: deploymentTarget,
+                                                 infoPlist: .default,
+                                                 sources: ["\(projectPath)/Sources/**"],
+                                                 resources: resourceName, // resources provided by feature, e.g. ManResouces
+                                                 headers: header,
+                                                 dependencies: dependentReferences(types: [.framework])))
 
         if !requiredTargetTypes.contains(.unitTests) { return [sources] }
 
@@ -148,7 +151,9 @@ extension MicroFeature {
             // "UILaunchStoryboardName": "LaunchScreen"
         ]
 
-        let mainTarget = Target(
+        let targetPostProcessor = requiredTargetTypes.targetPostProcessor(.exampleApp)
+
+        let mainTarget = targetPostProcessor(Target(
             name: exampleName,
             platform: platform,
             product: .app,
@@ -158,7 +163,7 @@ extension MicroFeature {
             sources: ["\(projectPath)/Example/Shared/**"],
             resources: ["\(projectPath)/Example/Shared/*.xcassets"],
             dependencies: dependentReferences(types: [.exampleApp]) + [.target(name: name)] // need to reference the framework target
-        )
+        ))
 
         if !requiredTargetTypes.contains(.uiTests) { return [mainTarget] }
 

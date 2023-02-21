@@ -5,7 +5,7 @@
 //  Created by Hai Feng Kao on 2022/2/3.
 //
 
-import Foundation
+import ProjectDescription
 
 public enum RequiredTargetType: Hashable {
     case framework
@@ -70,6 +70,13 @@ struct RequiredTargetTypes: Hashable {
 
     /// we don't support objc unit test kiwi framework
     // static var objcTargets: Self = .init(types: .objcTargets, hasResources: .empty, hasHeader: true)
+    func targetPostProcessor(_ type: RequiredTargetType) -> TargetConfig.TargetPostProcessor {
+        configs[type]?.targetPostProcessor ?? identity
+    }
+}
+
+func identity<T>(_ t: T) -> T {
+    t
 }
 
 extension RequiredTargetTypes: HasModuleDependencies {

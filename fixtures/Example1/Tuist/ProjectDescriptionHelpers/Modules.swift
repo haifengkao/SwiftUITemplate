@@ -11,7 +11,10 @@ import SwiftUITemplate
 private extension Module {
     static var MyApp: Module {
         .uFeature(name: "MyApp", targets: [
-            .exampleApp: .resourcesOnly,
+            .exampleApp: .resourcesOnly.targetPostProcessor { t -> Target in
+
+                t |> Target.lens.name .~ "MyApp1"
+            },
             .unitTests: .default,
             .framework: .hasDependencies([
                 .Alamofire,
