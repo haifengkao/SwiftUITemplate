@@ -14,6 +14,7 @@ import Quick
 func awaitTest() async -> Int {
     return 1
 }
+
 class TableOfContentsSpec: QuickSpec {
     override func spec() {
         it("can call async func") {
