@@ -29,7 +29,10 @@ private extension Module {
             .exampleApp: .resourcesOnly,
             .unitTests: .default,
             .framework: .hasDependencies([
-            ]),
+            ]).targetPostProcessor { target -> Target in
+                target |> Target.lens.coreDataModels .~ [.init(.relativeToManifest(
+                    "Features/MyFeature1/CoreData/DummyModel.xcdatamodeld"))]
+            },
         ])
     }
 
