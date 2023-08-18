@@ -32,7 +32,15 @@ private extension Module {
             ]).targetPostProcessor { target -> Target in
                 target |> Target.lens.coreDataModels .~ [.init(.relativeToManifest(
                     "Features/MyFeature1/CoreData/DummyModel.xcdatamodeld"))]
+                    |> Target.lens.settings .~ .settings(configurations:
+                        [
+                            .debug(name: "Debug", xcconfig: nil),
+                            .release(name: "Release", xcconfig: nil),
+
+                            .release(name: "Profile2", settings: ["OTHER_SWIFT_FLAGS": "$(inherited) -DProfile"], xcconfig: nil),
+                        ], defaultSettings: .recommended )
             },
+
         ])
     }
 
