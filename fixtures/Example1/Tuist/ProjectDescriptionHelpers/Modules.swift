@@ -26,7 +26,7 @@ private extension Module {
 
     static var MyFeature1: Module {
         .uFeature(name: "MyFeature1", targets: [
-            .exampleApp: .resourcesOnly,
+            .exampleApp: .default,
             .unitTests: .default,
             .framework: .hasDependencies([
             ]).targetPostProcessor { target -> Target in
@@ -49,7 +49,7 @@ private extension Module {
         .uFeature(name: "MyInfrastructureCode",
                   group: MicroFeatureGroup.infrastructure.rawValue,
                   targets: [
-                      .exampleApp: .resourcesOnly,
+                      .exampleApp: .default,
                       .unitTests: .default,
                       .framework: .hasDependencies([
                       ]),

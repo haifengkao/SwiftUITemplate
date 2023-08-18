@@ -153,6 +153,14 @@ extension MicroFeature {
 
         let targetPostProcessor = requiredTargetTypes.targetPostProcessor(.exampleApp)
 
+        // include the Assets folder as well if the example target has resources
+        // Example/Shared/Assets.xcassets is the default location for the example app's assets
+        let resourceName: ResourceFileElements = requiredTargetTypes.hasResources(.exampleApp) ?
+                    ["\(projectPath)/Example/Shared/*.xcassets", "\(projectPath)/Example/Assets/**"]
+                    :
+                    ["\(projectPath)/Example/Shared/*.xcassets"]
+        
+        
         let mainTarget = targetPostProcessor(Target(
             name: exampleName,
             platform: platform,
@@ -161,7 +169,7 @@ extension MicroFeature {
             deploymentTarget: deploymentTarget,
             infoPlist: .extendingDefault(with: infoPlist),
             sources: ["\(projectPath)/Example/Shared/**"],
-            resources: ["\(projectPath)/Example/Shared/*.xcassets"],
+            resources: resourceName,
             dependencies: dependentReferences(types: [.exampleApp]) + [.target(name: name)] // need to reference the framework target
         ))
 
