@@ -171,7 +171,7 @@ It will create `MyFeature1` in `Features` folder.
 
 To start working on the project, you can follow the steps below:
 1. Clone the project.
-2. cd `fixtures/Example1`
-3. `tuist fetch` to install the plugin
-3. `tuist edit` to add new modules or modify the plugin files
-4. `tuist generate` to generate the example xcworkspace
+1. cd `fixtures/Example1`
+1. `tuist fetch` to install the plugin
+1. `tuist edit` to modify the plugin files
+1. `tuist generate` to generate the example xcworkspace. Use this command to check if the plugin works correctly
