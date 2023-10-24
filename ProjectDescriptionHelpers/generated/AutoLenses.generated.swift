@@ -11,22 +11,22 @@ public struct Lens<whole, part> {
     let set: (part, whole) -> whole
 }
 
-public func + <A, B, C>(lhs: Lens<A, B>, rhs: Lens<B, C>) -> Lens<A, C> {
+public func + <A, B, C> (lhs: Lens<A, B>, rhs: Lens<B, C>) -> Lens<A, C> {
     return Lens<A, C>(
         get: { a in rhs.get(lhs.get(a)) },
-        set: { c, a in lhs.set(rhs.set(c, lhs.get(a)), a) }
+        set: { (c, a) in lhs.set(rhs.set(c, lhs.get(a)), a) }
     )
 }
 
-public func .~ <A, B>(lhs: Lens<A, B>, rhs: B) -> (A) -> A {
+public func .~ <A, B> (lhs: Lens<A, B>, rhs: B) -> (A) -> A {
     return { a in lhs.set(rhs, a) }
 }
 
-public func |> <A, B>(x: A, f: (A) -> B) -> B {
+public func |> <A, B> (x: A, f: (A) -> B) -> B {
     return f(x)
 }
 
-public func |> <A, B, C>(f: @escaping (A) -> B, g: @escaping (B) -> C) -> (A) -> C {
+public func |> <A, B, C> (f: @escaping (A) -> B, g: @escaping (B) -> C) -> (A) -> C {
     return { g(f($0)) }
 }
 
@@ -35,115 +35,133 @@ public extension Target {
         public static let name = Lens<Target, String>(
             get: { $0.name },
             set: { name, target in
-                Target(name: name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environment: target.environment, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles)
+                Target(name: name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environmentVariables: target.environmentVariables, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles, buildRules: target.buildRules, mergedBinaryType: target.mergedBinaryType, mergeable: target.mergeable)
             }
         )
-        public static let platform = Lens<Target, ProjectDescription.Platform>(
+        public static let platform = Lens<Target, Platform>(
             get: { $0.platform },
             set: { platform, target in
-                Target(name: target.name, platform: platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environment: target.environment, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles)
+                Target(name: target.name, platform: platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environmentVariables: target.environmentVariables, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles, buildRules: target.buildRules, mergedBinaryType: target.mergedBinaryType, mergeable: target.mergeable)
             }
         )
-        public static let product = Lens<Target, ProjectDescription.Product>(
+        public static let product = Lens<Target, Product>(
             get: { $0.product },
             set: { product, target in
-                Target(name: target.name, platform: target.platform, product: product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environment: target.environment, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles)
+                Target(name: target.name, platform: target.platform, product: product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environmentVariables: target.environmentVariables, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles, buildRules: target.buildRules, mergedBinaryType: target.mergedBinaryType, mergeable: target.mergeable)
             }
         )
         public static let productName = Lens<Target, String?>(
             get: { $0.productName },
             set: { productName, target in
-                Target(name: target.name, platform: target.platform, product: target.product, productName: productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environment: target.environment, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles)
+                Target(name: target.name, platform: target.platform, product: target.product, productName: productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environmentVariables: target.environmentVariables, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles, buildRules: target.buildRules, mergedBinaryType: target.mergedBinaryType, mergeable: target.mergeable)
             }
         )
         public static let bundleId = Lens<Target, String>(
             get: { $0.bundleId },
             set: { bundleId, target in
-                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environment: target.environment, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles)
+                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environmentVariables: target.environmentVariables, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles, buildRules: target.buildRules, mergedBinaryType: target.mergedBinaryType, mergeable: target.mergeable)
             }
         )
-        public static let deploymentTarget = Lens<Target, ProjectDescription.DeploymentTarget?>(
+        public static let deploymentTarget = Lens<Target, DeploymentTarget?>(
             get: { $0.deploymentTarget },
             set: { deploymentTarget, target in
-                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environment: target.environment, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles)
+                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environmentVariables: target.environmentVariables, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles, buildRules: target.buildRules, mergedBinaryType: target.mergedBinaryType, mergeable: target.mergeable)
             }
         )
-        public static let infoPlist = Lens<Target, ProjectDescription.InfoPlist?>(
+        public static let infoPlist = Lens<Target, InfoPlist?>(
             get: { $0.infoPlist },
             set: { infoPlist, target in
-                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environment: target.environment, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles)
+                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environmentVariables: target.environmentVariables, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles, buildRules: target.buildRules, mergedBinaryType: target.mergedBinaryType, mergeable: target.mergeable)
             }
         )
-        public static let sources = Lens<Target, ProjectDescription.SourceFilesList?>(
+        public static let sources = Lens<Target, SourceFilesList?>(
             get: { $0.sources },
             set: { sources, target in
-                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environment: target.environment, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles)
+                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environmentVariables: target.environmentVariables, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles, buildRules: target.buildRules, mergedBinaryType: target.mergedBinaryType, mergeable: target.mergeable)
             }
         )
-        public static let resources = Lens<Target, ProjectDescription.ResourceFileElements?>(
+        public static let resources = Lens<Target, ResourceFileElements?>(
             get: { $0.resources },
             set: { resources, target in
-                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environment: target.environment, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles)
+                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environmentVariables: target.environmentVariables, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles, buildRules: target.buildRules, mergedBinaryType: target.mergedBinaryType, mergeable: target.mergeable)
             }
         )
-        public static let copyFiles = Lens<Target, [ProjectDescription.CopyFilesAction]?>(
+        public static let copyFiles = Lens<Target, [CopyFilesAction]?>(
             get: { $0.copyFiles },
             set: { copyFiles, target in
-                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environment: target.environment, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles)
+                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environmentVariables: target.environmentVariables, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles, buildRules: target.buildRules, mergedBinaryType: target.mergedBinaryType, mergeable: target.mergeable)
             }
         )
-        public static let headers = Lens<Target, ProjectDescription.Headers?>(
+        public static let headers = Lens<Target, Headers?>(
             get: { $0.headers },
             set: { headers, target in
-                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environment: target.environment, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles)
+                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environmentVariables: target.environmentVariables, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles, buildRules: target.buildRules, mergedBinaryType: target.mergedBinaryType, mergeable: target.mergeable)
             }
         )
-        public static let entitlements = Lens<Target, ProjectDescription.Path?>(
+        public static let entitlements = Lens<Target, Entitlements?>(
             get: { $0.entitlements },
             set: { entitlements, target in
-                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environment: target.environment, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles)
+                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environmentVariables: target.environmentVariables, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles, buildRules: target.buildRules, mergedBinaryType: target.mergedBinaryType, mergeable: target.mergeable)
             }
         )
-        public static let scripts = Lens<Target, [ProjectDescription.TargetScript]>(
+        public static let scripts = Lens<Target, [TargetScript]>(
             get: { $0.scripts },
             set: { scripts, target in
-                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environment: target.environment, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles)
+                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environmentVariables: target.environmentVariables, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles, buildRules: target.buildRules, mergedBinaryType: target.mergedBinaryType, mergeable: target.mergeable)
             }
         )
-        public static let dependencies = Lens<Target, [ProjectDescription.TargetDependency]>(
+        public static let dependencies = Lens<Target, [TargetDependency]>(
             get: { $0.dependencies },
             set: { dependencies, target in
-                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environment: target.environment, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles)
+                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environmentVariables: target.environmentVariables, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles, buildRules: target.buildRules, mergedBinaryType: target.mergedBinaryType, mergeable: target.mergeable)
             }
         )
-        public static let settings = Lens<Target, ProjectDescription.Settings?>(
+        public static let settings = Lens<Target, Settings?>(
             get: { $0.settings },
             set: { settings, target in
-                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: settings, coreDataModels: target.coreDataModels, environment: target.environment, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles)
+                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: settings, coreDataModels: target.coreDataModels, environmentVariables: target.environmentVariables, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles, buildRules: target.buildRules, mergedBinaryType: target.mergedBinaryType, mergeable: target.mergeable)
             }
         )
-        public static let coreDataModels = Lens<Target, [ProjectDescription.CoreDataModel]>(
+        public static let coreDataModels = Lens<Target, [CoreDataModel]>(
             get: { $0.coreDataModels },
             set: { coreDataModels, target in
-                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: coreDataModels, environment: target.environment, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles)
+                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: coreDataModels, environmentVariables: target.environmentVariables, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles, buildRules: target.buildRules, mergedBinaryType: target.mergedBinaryType, mergeable: target.mergeable)
             }
         )
-        public static let environment = Lens<Target, [String: String]>(
-            get: { $0.environment },
-            set: { environment, target in
-                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environment: environment, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles)
+        public static let environmentVariables = Lens<Target, [String: EnvironmentVariable]>(
+            get: { $0.environmentVariables },
+            set: { environmentVariables, target in
+                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environmentVariables: environmentVariables, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles, buildRules: target.buildRules, mergedBinaryType: target.mergedBinaryType, mergeable: target.mergeable)
             }
         )
-        public static let launchArguments = Lens<Target, [ProjectDescription.LaunchArgument]>(
+        public static let launchArguments = Lens<Target, [LaunchArgument]>(
             get: { $0.launchArguments },
             set: { launchArguments, target in
-                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environment: target.environment, launchArguments: launchArguments, additionalFiles: target.additionalFiles)
+                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environmentVariables: target.environmentVariables, launchArguments: launchArguments, additionalFiles: target.additionalFiles, buildRules: target.buildRules, mergedBinaryType: target.mergedBinaryType, mergeable: target.mergeable)
             }
         )
-        public static let additionalFiles = Lens<Target, [ProjectDescription.FileElement]>(
+        public static let additionalFiles = Lens<Target, [FileElement]>(
             get: { $0.additionalFiles },
             set: { additionalFiles, target in
-                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environment: target.environment, launchArguments: target.launchArguments, additionalFiles: additionalFiles)
+                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environmentVariables: target.environmentVariables, launchArguments: target.launchArguments, additionalFiles: additionalFiles, buildRules: target.buildRules, mergedBinaryType: target.mergedBinaryType, mergeable: target.mergeable)
+            }
+        )
+        public static let buildRules = Lens<Target, [BuildRule]>(
+            get: { $0.buildRules },
+            set: { buildRules, target in
+                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environmentVariables: target.environmentVariables, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles, buildRules: buildRules, mergedBinaryType: target.mergedBinaryType, mergeable: target.mergeable)
+            }
+        )
+        public static let mergedBinaryType = Lens<Target, MergedBinaryType>(
+            get: { $0.mergedBinaryType },
+            set: { mergedBinaryType, target in
+                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environmentVariables: target.environmentVariables, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles, buildRules: target.buildRules, mergedBinaryType: mergedBinaryType, mergeable: target.mergeable)
+            }
+        )
+        public static let mergeable = Lens<Target, Bool>(
+            get: { $0.mergeable },
+            set: { mergeable, target in
+                Target(name: target.name, platform: target.platform, product: target.product, productName: target.productName, bundleId: target.bundleId, deploymentTarget: target.deploymentTarget, infoPlist: target.infoPlist, sources: target.sources, resources: target.resources, copyFiles: target.copyFiles, headers: target.headers, entitlements: target.entitlements, scripts: target.scripts, dependencies: target.dependencies, settings: target.settings, coreDataModels: target.coreDataModels, environmentVariables: target.environmentVariables, launchArguments: target.launchArguments, additionalFiles: target.additionalFiles, buildRules: target.buildRules, mergedBinaryType: target.mergedBinaryType, mergeable: mergeable)
             }
         )
     }
