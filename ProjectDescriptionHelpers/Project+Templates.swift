@@ -39,7 +39,7 @@ extension Array: HasAllProjectTargets where Element == Module {
     public var allProjectTargets: [Target] {
         let targets = reduce(into: []) { partialResult, module in
             partialResult += module.allProjectTargets
-        }.uniques(by: \.bundleId)
+        }.uniques(by: \.name)
 
         // sorted targets are easier to find in Xcode
         return targets.sorted(by: { lhs, rhs in
