@@ -143,7 +143,7 @@ extension MicroFeature {
         if !requiredTargetTypes.contains(.exampleApp) { return [] } // nothing to do
 
         let exampleName = name + "-Example"
-        let infoPlist: [String: InfoPlist.Value] = [
+        let infoPlist: [String: Plist.Value] = [
             "CFBundleShortVersionString": "1.0",
             "CFBundleVersion": "1",
             "UIApplicationSceneManifest": ["UIApplicationSupportsMultipleScenes": true],
