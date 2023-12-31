@@ -3,7 +3,7 @@ import ProjectDescriptionHelpers
 import SwiftUITemplate
 
 let project: Project = {
-    GenerationConfig.default.platform = platform
+    GenerationConfig.default.destinations = destinations
 
     return Project(name: "App",
                    organizationName: "example.SwiftUITemplate",

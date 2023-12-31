@@ -1,13 +1,3 @@
-//
-//  Modules.swift
-//  Manifests
-//
-//  Created by Hai Feng Kao on 2022/3/22.
-//
-
-import ProjectDescription
-import SwiftUITemplate
-
 private extension Module {
     static var MyApp: Module {
         .uFeature(name: "MyApp", targets: [
@@ -56,32 +46,6 @@ private extension Module {
                   ])
     }
 
-    static let Alamofire: Module = .package(SwiftPackage(name: "Alamofire", url: "https://github.com/Alamofire/Alamofire", requirement: .upToNextMajor(from: "5.5.0")))
-    
-  
-    static var Quick: Module {
-            .package(.init(name: "Quick", url: "https://github.com/Quick/Quick", requirement: .upToNextMajor(from: "6.0.1")))
-        }
+    static let Alamofire: Module = .package(name: "Alamofire", url: "https://github.com/Alamofire/Alamofire", requirement: .upToNextMajor(from: "5.5.0"))
 
-    static var Nimble: Module {
-            .package(.init(name: "Nimble", url: "https://github.com/Quick/Nimble", requirement: .upToNextMajor(from: "11.2.1")))
-        }
-  
-                     
-    
-}
-
-public let modules: [Module] = [
-    Module.MyApp,
-    Module.Quick,
-    Module.Nimble,
-]
-
-public let destinations: Set<Destination> = [.iPad, .iPhone]
-
-enum MicroFeatureGroup: String {
-    case infrastructure = "Infrastructure"
-    case applicationServices = "ApplicationServices"
-    case utilities = "Utilities"
-    case common = "Common"
 }
