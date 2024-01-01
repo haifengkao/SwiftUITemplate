@@ -13,8 +13,8 @@ import Nimble
 import Quick
 
 class TableOfContentsSpec: QuickSpec {
-    override func spec() {
-        xdescribe("these will fail") {
+    override class func spec() {
+        describe("these will fail") {
             it("can do maths") {
                 expect(1) == 2
             }

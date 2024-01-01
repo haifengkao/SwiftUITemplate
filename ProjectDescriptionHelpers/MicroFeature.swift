@@ -9,10 +9,12 @@ import ProjectDescription
 
 /// micro framework
 public struct MicroFeature: HasReference, Hashable {
-    internal init(name: String, group: MicroFeatureGroup, requiredTargetTypes: RequiredTargetTypes) {
+    internal init(name: String, group: MicroFeatureGroup, requiredTargetTypes: RequiredTargetTypes, destinations: Destinations? = nil, deploymentTargets: DeploymentTargets? = nil) {
         self.name = name
         self.group = group
         self.requiredTargetTypes = requiredTargetTypes
+        _destinations = destinations
+        _deploymentTargets = deploymentTargets
     }
 
     internal init(name: String,
@@ -37,15 +39,25 @@ public struct MicroFeature: HasReference, Hashable {
         }
     }
 
-    var platform: Platform {
-        GenerationConfig.default.platform
-    }
-
-    var deploymentTarget: DeploymentTarget {
-        GenerationConfig.default.deploymentTarget
-    }
-
     var requiredTargetTypes: RequiredTargetTypes
+
+    private var _destinations: Destinations?
+    var destinations: Destinations {
+        if let _destinations = _destinations {
+            return _destinations
+        } else {
+            return GenerationConfig.default.destinations
+        }
+    }
+
+    private var _deploymentTargets: DeploymentTargets?
+    var deploymentTargets: DeploymentTargets {
+        if let target = _deploymentTargets {
+            return target
+        } else {
+            return GenerationConfig.default.deploymentTargets
+        }
+    }
 }
 
 extension MicroFeature {
@@ -54,7 +66,7 @@ extension MicroFeature {
         case .singleProject:
             return path
         case .workspace:
-            return "" // workspace's project will use path relative to it's project folder
+            return "" // workspaces project will use path relative to it's project folder
         }
     }
 
@@ -104,10 +116,10 @@ extension MicroFeature {
 
         let targetPostProcessor = requiredTargetTypes.targetPostProcessor(.framework)
         let sources = targetPostProcessor(Target(name: name,
-                                                 platform: platform,
+                                                 destinations: destinations,
                                                  product: product,
                                                  bundleId: "io.tuist.\(name)".validBundleId,
-                                                 deploymentTarget: deploymentTarget,
+                                                 deploymentTargets: deploymentTargets,
                                                  infoPlist: .default,
                                                  sources: ["\(projectPath)/Sources/**"],
                                                  resources: resourceName, // resources provided by feature, e.g. ManResouces
@@ -127,10 +139,10 @@ extension MicroFeature {
             .external(name: "Quick"),
         ] + dependentReferences(types: [.unitTests])
         let tests = Target(name: "\(name)Tests",
-                           platform: platform,
+                           destinations: destinations,
                            product: .unitTests,
                            bundleId: "io.tuist.\(name)Tests".validBundleId,
-                           deploymentTarget: deploymentTarget,
+                           deploymentTargets: deploymentTargets,
                            infoPlist: .default,
                            sources: ["\(projectPath)/Tests/**"],
                            resources: testResourceName, // resources for testing
@@ -156,17 +168,16 @@ extension MicroFeature {
         // include the Assets folder as well if the example target has resources
         // Example/Shared/Assets.xcassets is the default location for the example app's assets
         let resourceName: ResourceFileElements = requiredTargetTypes.hasResources(.exampleApp) ?
-                    ["\(projectPath)/Example/Shared/*.xcassets", "\(projectPath)/Example/Assets/**"]
-                    :
-                    ["\(projectPath)/Example/Shared/*.xcassets"]
-        
-        
+            ["\(projectPath)/Example/Shared/*.xcassets", "\(projectPath)/Example/Assets/**"]
+            :
+            ["\(projectPath)/Example/Shared/*.xcassets"]
+
         let mainTarget = targetPostProcessor(Target(
             name: exampleName,
-            platform: platform,
+            destinations: destinations,
             product: .app,
             bundleId: "io.tuist.\(exampleName)".validBundleId,
-            deploymentTarget: deploymentTarget,
+            deploymentTargets: deploymentTargets,
             infoPlist: .extendingDefault(with: infoPlist),
             sources: ["\(projectPath)/Example/Shared/**"],
             resources: resourceName,
@@ -175,13 +186,13 @@ extension MicroFeature {
 
         if !requiredTargetTypes.contains(.uiTests) { return [mainTarget] }
 
-        let uiTests = Target(name: "\(exampleName)Tests\(platform)",
-                             platform: platform,
+        let uiTests = Target(name: "\(exampleName)UITests",
+                             destinations: destinations,
                              product: .uiTests,
-                             bundleId: "io.tuist.\(name)UITests\(platform)".validBundleId,
-                             deploymentTarget: deploymentTarget,
+                             bundleId: "io.tuist.\(name)UITests".validBundleId,
+                             deploymentTargets: deploymentTargets,
                              infoPlist: .default,
-                             sources: ["\(projectPath)/Example/Tests \(platform)/**"],
+                             sources: ["\(projectPath)/Example/UITests/**"],
                              resources: [], // resources for testing
                              dependencies: [.target(name: exampleName),
                                             .external(name: "Nimble"),
