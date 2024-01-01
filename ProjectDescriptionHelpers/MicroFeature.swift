@@ -9,10 +9,12 @@ import ProjectDescription
 
 /// micro framework
 public struct MicroFeature: HasReference, Hashable {
-    internal init(name: String, group: MicroFeatureGroup, requiredTargetTypes: RequiredTargetTypes) {
+    internal init(name: String, group: MicroFeatureGroup, requiredTargetTypes: RequiredTargetTypes, destinations: Destinations? = nil, deploymentTargets: DeploymentTargets? = nil) {
         self.name = name
         self.group = group
         self.requiredTargetTypes = requiredTargetTypes
+        _destinations = destinations
+        _deploymentTargets = deploymentTargets
     }
 
     internal init(name: String,
@@ -37,6 +39,8 @@ public struct MicroFeature: HasReference, Hashable {
         }
     }
 
+    var requiredTargetTypes: RequiredTargetTypes
+
     private var _destinations: Destinations?
     var destinations: Destinations {
         if let _destinations = _destinations {
@@ -54,8 +58,6 @@ public struct MicroFeature: HasReference, Hashable {
             return GenerationConfig.default.deploymentTargets
         }
     }
-
-    var requiredTargetTypes: RequiredTargetTypes
 }
 
 extension MicroFeature {

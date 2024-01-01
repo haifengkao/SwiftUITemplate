@@ -5,7 +5,6 @@
 //  Created by Hai Feng Kao on 2022/1/2.
 //
 
-import Foundation
 import ProjectDescription
 
 public typealias Modules = Set<Module>
@@ -51,8 +50,17 @@ public enum Module: Hashable {
 }
 
 public extension Module {
-    static func uFeature(name: String, group: MicroFeatureGroup = nil, targets: [RequiredTargetType: TargetConfig]) -> Self {
-        .uFeature(.init(name: name, group: group, requiredTargetTypes: .init(configs: targets)))
+    static func uFeature(name: String,
+                         group: MicroFeatureGroup = nil,
+                         targets: [RequiredTargetType: TargetConfig],
+                         destinations: Destinations? = nil,
+                         deploymentTargets: DeploymentTargets? = nil) -> Self
+    {
+        .uFeature(.init(name: name,
+                        group: group,
+                        requiredTargetTypes: .init(configs: targets),
+                        destinations: destinations,
+                        deploymentTargets: deploymentTargets))
     }
 
     static func package(name: String, url: String, requirement: Package.Requirement) -> Self {
