@@ -16,13 +16,11 @@ public struct SwiftPackage: HasSwiftPackage, HasReference, Hashable {
         self.name = name
         self.url = url
         self.requirement = requirement
-        
     }
 
     let name: String
     let url: String
     let requirement: Package.Requirement
-   
 
     public var package: Package { .remote(url: url, requirement: requirement) }
 
@@ -32,9 +30,7 @@ public struct SwiftPackage: HasSwiftPackage, HasReference, Hashable {
 
     /// Quick and Nimble needs ENABLE_TESTING_SEARCH_PATH=YES to work
     public var targetSetting: TargetSetting {
-        
-       return [:]
-      
+        return [:]
     }
 
     public func hash(into hasher: inout Hasher) {

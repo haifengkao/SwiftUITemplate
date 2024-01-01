@@ -23,7 +23,7 @@ public struct GenerationConfig {
     public var linkType: LinkType = .staticLink
 
     public var destinations: Destinations = [.iPhone, .iPad]
-    public var deploymentTargets: DeploymentTargets =  DeploymentTargets(iOS: "15.0")
+    public var deploymentTargets: DeploymentTargets = .init(iOS: "15.0")
     public var featuresRootPath: String = "Features/"
     public static var `default`: Self = .init()
 }

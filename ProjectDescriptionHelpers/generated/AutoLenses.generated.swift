@@ -11,22 +11,22 @@ public struct Lens<whole, part> {
     let set: (part, whole) -> whole
 }
 
-public func + <A, B, C> (lhs: Lens<A, B>, rhs: Lens<B, C>) -> Lens<A, C> {
+public func + <A, B, C>(lhs: Lens<A, B>, rhs: Lens<B, C>) -> Lens<A, C> {
     return Lens<A, C>(
         get: { a in rhs.get(lhs.get(a)) },
-        set: { (c, a) in lhs.set(rhs.set(c, lhs.get(a)), a) }
+        set: { c, a in lhs.set(rhs.set(c, lhs.get(a)), a) }
     )
 }
 
-public func .~ <A, B> (lhs: Lens<A, B>, rhs: B) -> (A) -> A {
+public func .~ <A, B>(lhs: Lens<A, B>, rhs: B) -> (A) -> A {
     return { a in lhs.set(rhs, a) }
 }
 
-public func |> <A, B> (x: A, f: (A) -> B) -> B {
+public func |> <A, B>(x: A, f: (A) -> B) -> B {
     return f(x)
 }
 
-public func |> <A, B, C> (f: @escaping (A) -> B, g: @escaping (B) -> C) -> (A) -> C {
+public func |> <A, B, C>(f: @escaping (A) -> B, g: @escaping (B) -> C) -> (A) -> C {
     return { g(f($0)) }
 }
 

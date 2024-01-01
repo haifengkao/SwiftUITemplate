@@ -38,7 +38,7 @@ private extension Module {
                             .release(name: "Release", xcconfig: nil),
 
                             .release(name: "Profile2", settings: ["OTHER_SWIFT_FLAGS": "$(inherited) -DProfile"], xcconfig: nil),
-                        ], defaultSettings: .recommended )
+                        ], defaultSettings: .recommended)
             },
 
         ])
@@ -57,18 +57,14 @@ private extension Module {
     }
 
     static let Alamofire: Module = .package(SwiftPackage(name: "Alamofire", url: "https://github.com/Alamofire/Alamofire", requirement: .upToNextMajor(from: "5.5.0")))
-    
-  
+
     static var Quick: Module {
-            .package(.init(name: "Quick", url: "https://github.com/Quick/Quick", requirement: .upToNextMajor(from: "6.0.1")))
-        }
+        .package(.init(name: "Quick", url: "https://github.com/Quick/Quick", requirement: .upToNextMajor(from: "6.0.1")))
+    }
 
     static var Nimble: Module {
-            .package(.init(name: "Nimble", url: "https://github.com/Quick/Nimble", requirement: .upToNextMajor(from: "11.2.1")))
-        }
-  
-                     
-    
+        .package(.init(name: "Nimble", url: "https://github.com/Quick/Nimble", requirement: .upToNextMajor(from: "11.2.1")))
+    }
 }
 
 public let modules: [Module] = [
@@ -77,7 +73,7 @@ public let modules: [Module] = [
     Module.Nimble,
 ]
 
-public let destinations: Set<Destination> = [.iPad, .iPhone]
+public let destinations: Destinations = [.iPad, .iPhone]
 
 enum MicroFeatureGroup: String {
     case infrastructure = "Infrastructure"

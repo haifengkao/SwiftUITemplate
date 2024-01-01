@@ -168,11 +168,10 @@ extension MicroFeature {
         // include the Assets folder as well if the example target has resources
         // Example/Shared/Assets.xcassets is the default location for the example app's assets
         let resourceName: ResourceFileElements = requiredTargetTypes.hasResources(.exampleApp) ?
-                    ["\(projectPath)/Example/Shared/*.xcassets", "\(projectPath)/Example/Assets/**"]
-                    :
-                    ["\(projectPath)/Example/Shared/*.xcassets"]
-        
-        
+            ["\(projectPath)/Example/Shared/*.xcassets", "\(projectPath)/Example/Assets/**"]
+            :
+            ["\(projectPath)/Example/Shared/*.xcassets"]
+
         let mainTarget = targetPostProcessor(Target(
             name: exampleName,
             destinations: destinations,
