@@ -280,12 +280,12 @@ extension Target {
     }
 }
 
-extension Destinations {
+private extension Destinations {
     /// Maps a ProjectDescription.Package instance into a TuistGraph.Package model.
     /// - Parameters:
     ///   - manifest: Manifest representation of Package.
     ///   - generatorPaths: Generator paths.
-    fileprivate static func from(
+    static func from(
         platform: Platform,
         deploymentTarget: DeploymentTarget?
     ) -> Destinations {
