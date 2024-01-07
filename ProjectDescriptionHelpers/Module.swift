@@ -53,7 +53,7 @@ public extension Module {
     static func uFeature(name: String,
                          group: MicroFeatureGroup = nil,
                          targets: [RequiredTargetType: TargetConfig],
-                         destinations: Destinations? = nil,
+                         destinations: Destinations = [.iPhone, .iPad, .mac],
                          deploymentTargets: DeploymentTargets? = nil) -> Self
     {
         .uFeature(.init(name: name,

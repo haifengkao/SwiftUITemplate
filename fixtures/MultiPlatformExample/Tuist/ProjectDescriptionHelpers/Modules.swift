@@ -9,7 +9,7 @@ import ProjectDescription
 import SwiftUITemplate
 
 private extension Module {
-    static var MyApp: Module {
+    static var MyiOSApp: Module {
         .uFeature(name: "MyApp", targets: [
             .exampleApp: .resourcesOnly.targetPostProcessor { t -> Target in
 
@@ -21,7 +21,23 @@ private extension Module {
                 .MyFeature1,
                 .MyInfrastructureCode,
             ]),
-        ])
+        ],
+                destinations: [.iPhone, .iPad])
+    }
+    static var MyMacOSApp: Module {
+        .uFeature(name: "MyApp", targets: [
+            .exampleApp: .resourcesOnly.targetPostProcessor { t -> Target in
+
+                t |> Target.lens.name .~ "MyApp1"
+            },
+            .unitTests: .default,
+            .framework: .hasDependencies([
+                .Alamofire,
+                .MyFeature1,
+                .MyInfrastructureCode,
+            ]),
+        ],
+                destinations: [.mac])
     }
 
     static var MyFeature1: Module {
@@ -67,13 +83,17 @@ private extension Module {
     }
 }
 
-public let modules: [Module] = [
-    Module.MyApp,
+public let iosModules: [Module] = [
+    Module.MyiOSApp,
     Module.Quick,
     Module.Nimble,
 ]
 
-public let destinations: Destinations = [.iPad, .iPhone]
+public let macOSModules: [Module] = [
+    Module.MyMacOSApp,
+    Module.Quick,
+    Module.Nimble,
+]
 
 enum MicroFeatureGroup: String {
     case infrastructure = "Infrastructure"
