@@ -18,8 +18,13 @@ def convert_swift_dependencies(input_file, output_file):
     output += "        .package(url: \"https://github.com/Quick/Nimble\", from: \"13.0.0\"),\n"
     output += "        .package(url: \"https://github.com/Quick/Quick\", from: \"7.0.0\"),\n"
 
-    for _, url, _, _, version in matches:
-        output += f"        .package(url: \"{url}\", from: \"{version}\"),\n"
+    for url, req_type, _, version in matches:
+        if req_type == "upToNextMajor":
+            output += f"        .package(url: \"{url}\", from: \"{version}\"),\n"
+        elif req_type == "revision":
+            output += f"        .package(url: \"{url}\", .revision(\"{version}\")),\n"
+        elif req_type == "branch":
+            output += f"        .package(url: \"{url}\", .branch(\"{version}\")),\n"
 
     output = output.rstrip(",\n") + "\n    ]\n)"
 
