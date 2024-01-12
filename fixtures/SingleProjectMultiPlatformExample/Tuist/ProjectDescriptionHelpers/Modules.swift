@@ -71,7 +71,7 @@ private extension Module {
                       .exampleApp: .default,
                       .unitTests: .default,
                       .framework: .hasDependencies([
-                      ]),
+                      ])
                   ])
     }
 
