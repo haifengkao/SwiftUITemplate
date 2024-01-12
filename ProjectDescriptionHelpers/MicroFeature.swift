@@ -9,24 +9,14 @@ import ProjectDescription
 
 /// micro framework
 public struct MicroFeature: HasReference, Hashable {
-    internal init(name: String, group: MicroFeatureGroup, requiredTargetTypes: RequiredTargetTypes, destinations: Destinations? = nil, deploymentTargets: DeploymentTargets? = nil) {
+    internal init(name: String, group: MicroFeatureGroup, requiredTargetTypes: RequiredTargetTypes, destinations: Destinations, deploymentTargets: DeploymentTargets? = nil) {
         self.name = name
         self.group = group
         self.requiredTargetTypes = requiredTargetTypes
-        _destinations = destinations
+        self.destinations = destinations
         _deploymentTargets = deploymentTargets
     }
 
-    internal init(name: String,
-                  group: MicroFeatureGroup,
-                  additionalDependencies: Modules = [])
-    {
-        self.init(name: name, group: group, requiredTargetTypes: .init(configs: [
-            .framework: .init(hasResources: false, modules: additionalDependencies),
-            // .unitTests: .init(hasResources: false, modules: []), // disable unit test target by default
-
-        ]))
-    }
 
     let name: String
     let group: MicroFeatureGroup
@@ -41,14 +31,7 @@ public struct MicroFeature: HasReference, Hashable {
 
     var requiredTargetTypes: RequiredTargetTypes
 
-    private var _destinations: Destinations?
-    var destinations: Destinations {
-        if let _destinations = _destinations {
-            return _destinations
-        } else {
-            return GenerationConfig.default.destinations
-        }
-    }
+    var destinations: Destinations
 
     private var _deploymentTargets: DeploymentTargets?
     var deploymentTargets: DeploymentTargets {
@@ -61,12 +44,39 @@ public struct MicroFeature: HasReference, Hashable {
 }
 
 extension MicroFeature {
+
+    func globPath(_ relativePath: String) -> ProjectDescription.Path {
+        let thePath: String = "\(path)/\(relativePath)"
+        switch GenerationConfig.default.mode {
+        case .singleProject:
+            return .relativeToManifest(thePath)
+        case .workspace:
+            return .relativeToManifest(thePath) // workspaces project will use path relative to it's project folder
+        case .multipleProjects:
+            return .relativeToRoot(thePath)
+        }
+    }
+
+    func resourceGlob(_ relativePath: String)-> ProjectDescription.ResourceFileElement {
+        return .glob(pattern: globPath(relativePath))
+    }
+
+    func fileListGlob(_ relativePath: String)-> ProjectDescription.FileListGlob {
+        return .glob(globPath(relativePath))
+    }
+
+    func sourceGlob(_ relativePath: String)-> ProjectDescription.SourceFileGlob {
+        return .glob(globPath(relativePath))
+    }
+
     var projectPath: String {
         switch GenerationConfig.default.mode {
         case .singleProject:
             return path
         case .workspace:
             return "" // workspaces project will use path relative to it's project folder
+        case .multipleProjects:
+            return path
         }
     }
 
@@ -74,6 +84,8 @@ extension MicroFeature {
         switch GenerationConfig.default.mode {
         case .workspace:
             return .project(target: name, path: .relativeToRoot(path))
+        case .multipleProjects:
+            return .target(name: name)
         case .singleProject:
             return .target(name: name)
         }
@@ -96,21 +108,21 @@ extension MicroFeature {
     }
 
     var targets: [Target] {
-        return makeFeatureTargets(projectPath: projectPath) + makeFeatureExampleTargets(projectPath: projectPath)
+        makeFeatureTargets() + makeFeatureExampleTargets()
     }
 
     /// Helper function to create a framework target and an associated unit test target
-    private func makeFeatureTargets(projectPath: String) -> [Target] {
+    private func makeFeatureTargets() -> [Target] {
         let product: Product = GenerationConfig.default.linkType == .staticLink ? .staticFramework : .framework
 
         let resourceName: ResourceFileElements = requiredTargetTypes.hasResources(.framework) ?
-            ["\(projectPath)/Sources/Assets/**"]
+            [resourceGlob("Sources/Assets/**")]
             :
             []
 
         let header: Headers? = requiredTargetTypes.hasHeader(.framework) ? .headers(
-            public: "\(projectPath)/Sources/PublicHeader/**",
-            private: "\(projectPath)/Sources/PrivateHeader/**",
+            public: .list([fileListGlob("Sources/PublicHeader/**")]),
+            private: .list([fileListGlob("Sources/PrivateHeader/**")]),
             project: nil
         ) : nil
 
@@ -121,15 +133,15 @@ extension MicroFeature {
                                                  bundleId: "io.tuist.\(name)".validBundleId,
                                                  deploymentTargets: deploymentTargets,
                                                  infoPlist: .default,
-                                                 sources: ["\(projectPath)/Sources/**"],
-                                                 resources: resourceName, // resources provided by feature, e.g. ManResouces
+                                                 sources: [sourceGlob("Sources/**")],
+                                                 resources: resourceName, // resources provided by feature, e.g. ManResources
                                                  headers: header,
                                                  dependencies: dependentReferences(types: [.framework])))
 
         if !requiredTargetTypes.contains(.unitTests) { return [sources] }
 
         let testResourceName: ResourceFileElements = requiredTargetTypes.hasResources(.unitTests) ?
-            ["\(projectPath)/Tests/Assets/**"]
+            [resourceGlob("Tests/Assets/**")]
             :
             []
 
@@ -144,14 +156,14 @@ extension MicroFeature {
                            bundleId: "io.tuist.\(name)Tests".validBundleId,
                            deploymentTargets: deploymentTargets,
                            infoPlist: .default,
-                           sources: ["\(projectPath)/Tests/**"],
+                           sources: [sourceGlob("Tests/**")],
                            resources: testResourceName, // resources for testing
                            dependencies: testDependencies)
         return [sources, tests]
     }
 
     /// Helper function to create the application target.
-    private func makeFeatureExampleTargets(projectPath: String) -> [Target] {
+    private func makeFeatureExampleTargets() -> [Target] {
         if !requiredTargetTypes.contains(.exampleApp) { return [] } // nothing to do
 
         let exampleName = name + "-Example"
@@ -168,9 +180,9 @@ extension MicroFeature {
         // include the Assets folder as well if the example target has resources
         // Example/Shared/Assets.xcassets is the default location for the example app's assets
         let resourceName: ResourceFileElements = requiredTargetTypes.hasResources(.exampleApp) ?
-            ["\(projectPath)/Example/Shared/*.xcassets", "\(projectPath)/Example/Assets/**"]
+                [resourceGlob("Example/Shared/*.xcassets"), resourceGlob("Example/Assets/**")]
             :
-            ["\(projectPath)/Example/Shared/*.xcassets"]
+            [resourceGlob("Example/Shared/*.xcassets")]
 
         let mainTarget = targetPostProcessor(Target(
             name: exampleName,
@@ -179,7 +191,7 @@ extension MicroFeature {
             bundleId: "io.tuist.\(exampleName)".validBundleId,
             deploymentTargets: deploymentTargets,
             infoPlist: .extendingDefault(with: infoPlist),
-            sources: ["\(projectPath)/Example/Shared/**"],
+            sources: [sourceGlob("Example/Shared/**")],
             resources: resourceName,
             dependencies: dependentReferences(types: [.exampleApp]) + [.target(name: name)] // need to reference the framework target
         ))
@@ -192,7 +204,7 @@ extension MicroFeature {
                              bundleId: "io.tuist.\(name)UITests".validBundleId,
                              deploymentTargets: deploymentTargets,
                              infoPlist: .default,
-                             sources: ["\(projectPath)/Example/UITests/**"],
+                             sources: [sourceGlob("Example/UITests/**")], // TODO: need to fix the path for ui tests
                              resources: [], // resources for testing
                              dependencies: [.target(name: exampleName),
                                             .external(name: "Nimble"),
