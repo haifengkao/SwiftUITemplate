@@ -10,7 +10,7 @@ import SwiftUITemplate
 
 private extension Module {
     static var MyiOSApp: Module {
-        .uFeature(name: "MyApp", targets: [
+        .uFeature(name: "MyiOSApp", targets: [
             .exampleApp: .resourcesOnly.targetPostProcessor { t -> Target in
 
                 t |> Target.lens.name .~ "MyApp1"
@@ -22,10 +22,11 @@ private extension Module {
                 .MyInfrastructureCode,
             ]),
         ],
-                destinations: [.iPhone, .iPad])
+        destinations: [.iPhone, .iPad],
+        deploymentTargets: .init(iOS: "15.0"))
     }
     static var MyMacOSApp: Module {
-        .uFeature(name: "MyApp", targets: [
+        .uFeature(name: "MyMacOSApp", targets: [
             .exampleApp: .resourcesOnly.targetPostProcessor { t -> Target in
 
                 t |> Target.lens.name .~ "MyApp1"
@@ -37,7 +38,8 @@ private extension Module {
                 .MyInfrastructureCode,
             ]),
         ],
-                destinations: [.mac])
+                destinations: [.mac],
+        deploymentTargets: .init(macOS: "11.0"))
     }
 
     static var MyFeature1: Module {
@@ -84,13 +86,8 @@ private extension Module {
     }
 }
 
-public let iosModules: [Module] = [
+public let modules: [Module] = [
     Module.MyiOSApp,
-    Module.Quick,
-    Module.Nimble,
-]
-
-public let macOSModules: [Module] = [
     Module.MyMacOSApp,
     Module.Quick,
     Module.Nimble,

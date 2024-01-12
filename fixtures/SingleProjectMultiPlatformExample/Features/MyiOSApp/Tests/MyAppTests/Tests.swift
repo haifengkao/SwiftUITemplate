@@ -1,20 +1,20 @@
 // https://github.com/Quick/Quick
 //
 //  Tests.swift
-//  MyFeature1
+//  MyApp
 //
 //  Created by Hai Feng Kao on 24/03/2022.
 //  Copyright © 2022 TuistDemo. All rights reserved.
 //
 
 import Foundation
-import MyFeature1
+import MyApp
 import Nimble
 import Quick
 
 class TableOfContentsSpec: QuickSpec {
-    static override func spec() {
-        xdescribe("these will fail") {
+    override class func spec() {
+        describe("these will fail") {
             it("can do maths") {
                 expect(1) == 2
             }
