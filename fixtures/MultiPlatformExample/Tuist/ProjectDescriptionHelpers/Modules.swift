@@ -46,8 +46,9 @@ private extension Module {
             .unitTests: .default,
             .framework: .hasDependencies([
             ]).targetPostProcessor { target -> Target in
-                target |> Target.lens.coreDataModels .~ [.init(.relativeToManifest(
-                    "Features/MyFeature1/CoreData/DummyModel.xcdatamodeld"))]
+                // the CoreData model is Features folder
+                // we have to use relativeToRoot
+                target |> Target.lens.coreDataModels .~ [.init(.relativeToRoot("Features/MyFeature1/CoreData/DummyModel.xcdatamodeld"))]
                     |> Target.lens.settings .~ .settings(configurations:
                         [
                             .debug(name: "Debug", xcconfig: nil),

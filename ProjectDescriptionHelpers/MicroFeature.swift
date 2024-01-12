@@ -45,28 +45,28 @@ public struct MicroFeature: HasReference, Hashable {
 
 extension MicroFeature {
 
-    func resourceGlob(_ relativePath: String)-> ProjectDescription.ResourceFileElement {
+    func globPath(_ relativePath: String) -> ProjectDescription.Path {
+        let thePath: String = "\(path)/\(relativePath)"
         switch GenerationConfig.default.mode {
         case .singleProject:
-            return .glob(pattern: "\(path)/\(relativePath)")
+            return .relativeToManifest(thePath)
         case .workspace:
-            return .glob(pattern: "\(path)/\(relativePath)") // workspaces project will use path relative to it's project folder
+            return .relativeToManifest(thePath) // workspaces project will use path relative to it's project folder
         case .multipleProjects:
-            return .glob(pattern: .relativeToRoot(relativePath))
+            return .relativeToRoot(thePath)
         }
+    }
 
+    func resourceGlob(_ relativePath: String)-> ProjectDescription.ResourceFileElement {
+        return .glob(pattern: globPath(relativePath))
+    }
+
+    func fileListGlob(_ relativePath: String)-> ProjectDescription.FileListGlob {
+        return .glob(globPath(relativePath))
     }
 
     func sourceGlob(_ relativePath: String)-> ProjectDescription.SourceFileGlob {
-        switch GenerationConfig.default.mode {
-        case .singleProject:
-            return .glob("\(path)/\(relativePath)")
-        case .workspace:
-            return .glob("\(path)/\(relativePath)") // workspaces project will use path relative to it's project folder
-        case .multipleProjects:
-            return .glob(.relativeToRoot(relativePath))
-        }
-
+        return .glob(globPath(relativePath))
     }
 
     var projectPath: String {
@@ -121,8 +121,8 @@ extension MicroFeature {
             []
 
         let header: Headers? = requiredTargetTypes.hasHeader(.framework) ? .headers(
-            public: "\(projectPath)/Sources/PublicHeader/**",
-            private: "\(projectPath)/Sources/PrivateHeader/**",
+            public: .list([fileListGlob("Sources/PublicHeader/**")]),
+            private: .list([fileListGlob("Sources/PrivateHeader/**")]),
             project: nil
         ) : nil
 
@@ -141,7 +141,7 @@ extension MicroFeature {
         if !requiredTargetTypes.contains(.unitTests) { return [sources] }
 
         let testResourceName: ResourceFileElements = requiredTargetTypes.hasResources(.unitTests) ?
-            ["\(projectPath)/Tests/Assets/**"]
+            [resourceGlob("Tests/Assets/**")]
             :
             []
 
@@ -180,9 +180,9 @@ extension MicroFeature {
         // include the Assets folder as well if the example target has resources
         // Example/Shared/Assets.xcassets is the default location for the example app's assets
         let resourceName: ResourceFileElements = requiredTargetTypes.hasResources(.exampleApp) ?
-                [resourceGlob("Example/Shared/*.xcassets"), resourceGlob("\(projectPath)/Example/Assets/**")]
+                [resourceGlob("Example/Shared/*.xcassets"), resourceGlob("Example/Assets/**")]
             :
-            [resourceGlob("Example/Assets/**")]
+            [resourceGlob("Example/Shared/*.xcassets")]
 
         let mainTarget = targetPostProcessor(Target(
             name: exampleName,
@@ -191,7 +191,7 @@ extension MicroFeature {
             bundleId: "io.tuist.\(exampleName)".validBundleId,
             deploymentTargets: deploymentTargets,
             infoPlist: .extendingDefault(with: infoPlist),
-            sources: [sourceGlob("Example/Sources/**")],
+            sources: [sourceGlob("Example/Shared/**")],
             resources: resourceName,
             dependencies: dependentReferences(types: [.exampleApp]) + [.target(name: name)] // need to reference the framework target
         ))
