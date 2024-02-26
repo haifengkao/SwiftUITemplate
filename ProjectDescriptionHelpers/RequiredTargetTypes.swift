@@ -12,10 +12,11 @@ public enum RequiredTargetType: Hashable {
     case unitTests
     case exampleApp
     case uiTests
+    case exampleAppTests
 }
 
 extension RequiredTargetType {
-    /// unitTests's dependencies will include .framework's depdendencies
+    /// unitTests' dependencies will include .framework's dependencies
     /// we need this to workaround tuist needs to specify all swift package dependencies bug
     var associatedTargets: TargetTypes {
         switch self {
@@ -25,6 +26,8 @@ extension RequiredTargetType {
             return .init([.framework, .unitTests])
         case .exampleApp:
             return .init([.framework, .exampleApp])
+        case .exampleAppTests:
+            return .init([.framework, .exampleApp, .exampleAppTests])
         case .uiTests:
             return .init([.framework, .exampleApp, .uiTests])
         }

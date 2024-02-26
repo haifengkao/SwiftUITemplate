@@ -196,22 +196,46 @@ extension MicroFeature {
             dependencies: dependentReferences(types: [.exampleApp]) + [.target(name: name)] // need to reference the framework target
         ))
 
-        if !requiredTargetTypes.contains(.uiTests) { return [mainTarget] }
+        var results: [Target] = [mainTarget]
 
-        let uiTests = Target(name: "\(exampleName)UITests",
-                             destinations: destinations,
-                             product: .uiTests,
-                             bundleId: "io.tuist.\(name)UITests".validBundleId,
-                             deploymentTargets: deploymentTargets,
-                             infoPlist: .default,
-                             sources: [sourceGlob("Example/UITests/**")], // TODO: need to fix the path for ui tests
-                             resources: [], // resources for testing
-                             dependencies: [.target(name: exampleName),
-                                            .external(name: "Nimble"),
-                                            .external(name: "Quick")]
-                                 + dependentReferences(types: [.uiTests]))
 
-        return [mainTarget, uiTests]
+        if requiredTargetTypes.contains(.uiTests) {
+            let uiTests = Target(name: "\(exampleName)UITests",
+                    destinations: destinations,
+                    product: .uiTests,
+                    bundleId: "io.tuist.\(name)UITests".validBundleId,
+                    deploymentTargets: deploymentTargets,
+                    infoPlist: .default,
+                    sources: [sourceGlob("Example/UITests/**")], // TODO: need to fix the path for ui tests
+                    resources: [], // resources for testing (really need resources for UI testing?
+                    dependencies: [.target(name: exampleName),
+                                   .external(name: "Nimble"),
+                                   .external(name: "Quick")]
+                            + dependentReferences(types: [.uiTests]))
+            results.append(uiTests)
+        }
+
+        if requiredTargetTypes.contains(.exampleAppTests) {
+            let resourceName: ResourceFileElements = requiredTargetTypes.hasResources(.exampleAppTests) ?
+                    [resourceGlob("Example/Tests/Assets/**")]
+                    :
+                    []
+            let exampleAppTests = Target(name: "\(exampleName)Tests",
+                    destinations: destinations,
+                    product: .unitTests,
+                    bundleId: "io.tuist.\(exampleName)Tests".validBundleId,
+                    deploymentTargets: deploymentTargets,
+                    infoPlist: .default,
+                    sources: [sourceGlob("Example/Tests/Sources/**")],
+                    resources: resourceName, // resources for testing
+                    dependencies: [.target(name: exampleName),
+                                   .external(name: "Nimble"),
+                                   .external(name: "Quick")]
+                            + dependentReferences(types: [.exampleAppTests]))
+            results.append(exampleAppTests)
+        }
+
+        return results
     }
 }
 

@@ -16,6 +16,7 @@ private extension Module {
                 t |> Target.lens.name .~ "MyApp1"
             },
             .unitTests: .default,
+            .exampleAppTests: .resourcesOnly,
             .framework: .hasDependencies([
                 .Alamofire,
                 .MyFeature1,
