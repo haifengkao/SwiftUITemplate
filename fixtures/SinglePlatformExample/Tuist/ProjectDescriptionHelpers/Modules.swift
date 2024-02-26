@@ -12,8 +12,9 @@ private extension Module {
     static var MyApp: Module {
         .uFeature(name: "MyApp", targets: [
             .exampleApp: .resourcesOnly.targetPostProcessor { t -> Target in
+                // change any Target property here
+                t |> Target.lens.productName .~ "MyApp1"
 
-                t |> Target.lens.name .~ "MyApp1"
             },
             .unitTests: .default,
             .exampleAppTests: .resourcesOnly,
