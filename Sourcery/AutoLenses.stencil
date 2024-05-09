@@ -35,7 +35,7 @@ public extension {{ type.name }} {
         public static let {{ variable.name }} = Lens<{{type.name}}, {{variable.typeName}}>(
             get: { $0.{{variable.name}} },
             set: { {{variable.name}}, {{type.name|lowercase}} in
-                {{type.name}}({% for argument in type.storedVariables %}{{argument.name}}: {% if variable.name == argument.name %}{{variable.name}}{% else %}{{type.name|lowercase}}.{{argument.name}}{% endif %}{{ ', ' if not forloop.last }}{% endfor %})
+                .{{type.name|lowerFirstLetter}}({% for argument in type.storedVariables %}{{argument.name}}: {% if variable.name == argument.name %}{{variable.name}}{% else %}{{type.name|lowercase}}.{{argument.name}}{% endif %}{{ ', ' if not forloop.last }}{% endfor %})
             }
         ){% endfor %}
     }
