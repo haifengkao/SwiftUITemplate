@@ -31,14 +31,216 @@ public struct MicroFeature: HasReference, Hashable {
 
     var requiredTargetTypes: RequiredTargetTypes
 
-    var destinations: Destinations
+    /// tuist 4.0 has destinations check
+    /// e.g. Target ParentView which depends on Childview does not support the required platforms: macos.
+    // The dependency on ParentView must have a dependency condition constraining to at most: ios.
+    // therefore the destinations and deploymentTargets should be computed based on the dependencies
+    private var _destinations: Destinations
+
+    var destinations: Destinations {
+        // compute the destinations based on the dependencies first
+
+        moduleDependencies(types: [.framework])
+            .compactMap(\.uFeature)
+            .reduce(_destinations) { result, uFeature in
+                result.intersection(uFeature.destinations)
+            }
+    }
 
     private var _deploymentTargets: DeploymentTargets?
     var deploymentTargets: DeploymentTargets {
-        if let target = _deploymentTargets {
-            return target
+        let selfDeploymentTargets = _deploymentTargets ?? GenerationConfig.default.deploymentTargets
+
+        return moduleDependencies(types: [.framework])
+            .compactMap(\.uFeature)
+            .reduce(selfDeploymentTargets) { result, uFeature in
+                result.intersection(uFeature.deploymentTargets) ?? GenerationConfig.default.deploymentTargets
+            }
+    }
+}
+
+/*
+  /// A struct representing the minimum deployment versions for each platform.
+ public struct DeploymentTargets : Hashable, Codable {
+
+     /// Minimum deployment version for iOS
+     public var iOS: String?
+
+     /// Minimum deployment version for macOS
+     public var macOS: String?
+
+     /// Minimum deployment version for watchOS
+     public var watchOS: String?
+
+     /// Minimum deployment version for tvOS
+     public var tvOS: String?
+
+     /// Minimum deployment version for visionOS
+     public var visionOS: String?
+
+   /// Multiplatform deployment target
+     public static func multiplatform(iOS: String? = nil, macOS: String? = nil, watchOS: String? = nil, tvOS: String? = nil, visionOS: String? = nil) -> ProjectDescription.DeploymentTargets
+  */
+private enum DeploymentVersion: Hashable {
+    case iOS(String)
+    case macOS(String)
+    case watchOS(String)
+    case tvOS(String)
+    case visionOS(String)
+
+    var iOS: String? {
+        if case let .iOS(version) = self {
+            return version
+        }
+        return nil
+    }
+
+    var macOS: String? {
+        if case let .macOS(version) = self {
+            return version
+        }
+        return nil
+    }
+
+    var watchOS: String? {
+        if case let .watchOS(version) = self {
+            return version
+        }
+        return nil
+    }
+
+    var tvOS: String? {
+        if case let .tvOS(version) = self {
+            return version
+        }
+        return nil
+    }
+
+    var visionOS: String? {
+        if case let .visionOS(version) = self {
+            return version
+        }
+        return nil
+    }
+
+    enum DeploymentPlatform: String, Hashable {
+        case iOS
+        case macOS
+        case watchOS
+        case tvOS
+        case visionOS
+    }
+
+    var deploymentPlatform: DeploymentPlatform {
+        switch self {
+        case .iOS: return .iOS
+        case .macOS: return .macOS
+        case .watchOS: return .watchOS
+        case .tvOS: return .tvOS
+        case .visionOS: return .visionOS
+        }
+    }
+}
+
+extension DeploymentVersion: Comparable {
+    static func < (lhs: DeploymentVersion, rhs: DeploymentVersion) -> Bool {
+        switch (lhs, rhs) {
+        case let (.iOS(lhs), .iOS(rhs)),
+             let (.macOS(lhs), .macOS(rhs)),
+             let (.watchOS(lhs), .watchOS(rhs)),
+             let (.tvOS(lhs), .tvOS(rhs)),
+             let (.visionOS(lhs), .visionOS(rhs)):
+            return lhs < rhs
+        default:
+            return false
+        }
+    }
+}
+
+private extension Set where Element == DeploymentVersion {
+    var deploymentPlatform: Set<DeploymentVersion.DeploymentPlatform> {
+        .init(map(\.deploymentPlatform))
+    }
+
+    // get the largest version for each platform
+    var largestVersionNumberWin: Set<DeploymentVersion> {
+        var dict: [DeploymentVersion.DeploymentPlatform: DeploymentVersion] = [:]
+        for version in self {
+            let platform = version.deploymentPlatform
+            if let existing = dict[platform] {
+                if version > existing {
+                    dict[platform] = version
+                }
+            } else {
+                dict[platform] = version
+            }
+        }
+        return Set(dict.values)
+    }
+}
+
+private extension DeploymentTargets {
+    var versions: Set<DeploymentVersion> {
+        var result: [DeploymentVersion] = []
+        if let iOS = iOS {
+            result.append(.iOS(iOS))
+        }
+        if let macOS = macOS {
+            result.append(.macOS(macOS))
+        }
+        if let watchOS = watchOS {
+            result.append(.watchOS(watchOS))
+        }
+        if let tvOS = tvOS {
+            result.append(.tvOS(tvOS))
+        }
+        if let visionOS = visionOS {
+            result.append(.visionOS(visionOS))
+        }
+        return Set(result)
+    }
+
+    static func make(from version: DeploymentVersion) -> DeploymentTargets {
+        switch version {
+        case let .iOS(version):
+            return .iOS(version)
+        case let .macOS(version):
+            return .macOS(version)
+        case let .watchOS(version):
+            return .watchOS(version)
+        case let .tvOS(version):
+            return .tvOS(version)
+        case let .visionOS(version):
+            return .visionOS(version)
+        }
+    }
+
+    static func make(from versions: Set<DeploymentVersion>) -> DeploymentTargets {
+        return .multiplatform(
+            iOS: versions.first { $0.iOS != nil }?.iOS,
+            macOS: versions.first { $0.macOS != nil }?.macOS,
+            watchOS: versions.first { $0.watchOS != nil }?.watchOS,
+            tvOS: versions.first { $0.tvOS != nil }?.tvOS,
+            visionOS: versions.first { $0.visionOS != nil }?.visionOS
+        )
+    }
+
+    func intersection(_ other: DeploymentTargets) -> DeploymentTargets? {
+        if self == other { return self }
+
+        let platforms = versions.deploymentPlatform.intersection(other.versions.deploymentPlatform)
+        let lhsVersions = versions.filter { platforms.contains($0.deploymentPlatform) }
+        let rhsVersions = other.versions.filter { platforms.contains($0.deploymentPlatform) }
+
+        // compare the versions
+        let resultVersions = (lhsVersions.union(rhsVersions)).largestVersionNumberWin
+
+        if resultVersions.count >= 2 {
+            return DeploymentTargets.make(from: resultVersions)
+        } else if let version = resultVersions.first {
+            return DeploymentTargets.make(from: version)
         } else {
-            return GenerationConfig.default.deploymentTargets
+            return nil
         }
     }
 }
