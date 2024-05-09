@@ -32,7 +32,7 @@ private extension Module {
             .unitTests: .default,
             .framework: .hasDependencies([
             ]).targetPostProcessor { target -> Target in
-                target |> Target.lens.coreDataModels .~ [.init(.relativeToManifest(
+                target |> Target.lens.coreDataModels .~ [.coreDataModel(.relativeToManifest(
                     "Features/MyFeature1/CoreData/DummyModel.xcdatamodeld"))]
                     |> Target.lens.settings .~ .settings(configurations:
                         [

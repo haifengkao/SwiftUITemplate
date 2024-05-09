@@ -127,7 +127,7 @@ extension MicroFeature {
         ) : nil
 
         let targetPostProcessor = requiredTargetTypes.targetPostProcessor(.framework)
-        let sources = targetPostProcessor(Target(name: name,
+        let sources = targetPostProcessor(.target(name: name,
                                                  destinations: destinations,
                                                  product: product,
                                                  bundleId: "io.tuist.\(name)".validBundleId,
@@ -150,7 +150,7 @@ extension MicroFeature {
             .external(name: "Nimble"),
             .external(name: "Quick"),
         ] + dependentReferences(types: [.unitTests])
-        let tests = Target(name: "\(name)Tests",
+        let tests: Target = .target(name: "\(name)Tests",
                            destinations: destinations,
                            product: .unitTests,
                            bundleId: "io.tuist.\(name)Tests".validBundleId,
@@ -184,7 +184,7 @@ extension MicroFeature {
             :
             [resourceGlob("Example/Shared/*.xcassets")]
 
-        let mainTarget = targetPostProcessor(Target(
+        let mainTarget = targetPostProcessor(Target.target(
             name: exampleName,
             destinations: destinations,
             product: .app,
@@ -200,7 +200,7 @@ extension MicroFeature {
 
 
         if requiredTargetTypes.contains(.uiTests) {
-            let uiTests = Target(name: "\(exampleName)UITests",
+            let uiTests: Target = .target(name: "\(exampleName)UITests",
                     destinations: destinations,
                     product: .uiTests,
                     bundleId: "io.tuist.\(name)UITests".validBundleId,
@@ -220,7 +220,7 @@ extension MicroFeature {
                     [resourceGlob("Example/Tests/Assets/**")]
                     :
                     []
-            let exampleAppTests = Target(name: "\(exampleName)Tests",
+            let exampleAppTests: Target = .target(name: "\(exampleName)Tests",
                     destinations: destinations,
                     product: .unitTests,
                     bundleId: "io.tuist.\(exampleName)Tests".validBundleId,

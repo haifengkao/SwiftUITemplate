@@ -42,7 +42,7 @@ public enum Module: Hashable {
 
     public var projectPath: Path {
         if let code = uFeature {
-            return .init(code.projectPath)
+            return .path(code.projectPath)
         }
 
         fatalError("\(self) project not implemented")

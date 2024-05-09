@@ -38,7 +38,7 @@ public struct GenerationConfig {
     public var mode: GenerationMode = .singleProject
     public var linkType: LinkType = .staticLink
 
-    public var deploymentTargets: DeploymentTargets = .init(iOS: "15.0")
+    public var deploymentTargets: DeploymentTargets = .iOS("15.0")
     public var featuresRootPath: String = "Features/"
     public static var `default`: Self = .init()
 }

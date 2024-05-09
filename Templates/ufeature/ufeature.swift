@@ -24,12 +24,12 @@ let defaultDate: String = {
     return dateFormatter.string(from: Date())
 }()
 
-let yearAttribute: Template.Attribute = .optional("year", default: defaultYear)
-let dateAttribute: Template.Attribute = .optional("date", default: defaultDate)
+let yearAttribute: Template.Attribute = .optional("year", default: .string(defaultYear))
+let dateAttribute: Template.Attribute = .optional("date", default: .string(defaultDate))
 
-let authorAttribute: Template.Attribute = .optional("author", default: defaultAuthor)
+let authorAttribute: Template.Attribute = .optional("author", default: .string(defaultAuthor))
 
-let companyAttribute: Template.Attribute = .optional("company", default: "")
+let companyAttribute: Template.Attribute = .optional("company", default: .string(""))
 let rootPath = "Features"
 let template = Template(
     description: "Custom template",
