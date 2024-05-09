@@ -22,8 +22,9 @@ private extension Module {
                 .MyInfrastructureCode,
             ]),
         ],
-                destinations: [.iPhone, .iPad])
+        destinations: [.iPhone, .iPad])
     }
+
     static var MyMacOSApp: Module {
         .uFeature(name: "MyApp", targets: [
             .exampleApp: .resourcesOnly.targetPostProcessor { t -> Target in
@@ -37,7 +38,7 @@ private extension Module {
                 .MyInfrastructureCode,
             ]),
         ],
-                destinations: [.mac])
+        destinations: [.mac])
     }
 
     static var MyFeature1: Module {

@@ -1,5 +1,6 @@
 import Foundation
 import ProjectDescription
+
 let nameAttribute: Template.Attribute = .required("name")
 
 let defaultAuthor: String = {

@@ -1,5 +1,5 @@
 //
-//  MicroFeature+ProjectGeneration.swift
+//  HasAllProjectTargets.swift
 //  ProjectDescriptionHelpers
 //
 //  Created by Hai Feng Kao on 2022/1/7.

@@ -13,9 +13,9 @@ public enum GenerationMode {
     /// |-- Projects/
     ///    |-- MyiOSApp/Project.swift
     ///    |-- MyMacOSApp/Project.swift
-    ///|-- Features/ (contains shared uFeatures for both iOS and macOS)
-    ///|-- Tuist/
-    ///|-- Workspace.swift
+    /// |-- Features/ (contains shared uFeatures for both iOS and macOS)
+    /// |-- Tuist/
+    /// |-- Workspace.swift
     /// make each uFeature as a target, a workspace which contains multiple projects
     /// useful if you want to share code between iOS and macOS
     case multipleProjects

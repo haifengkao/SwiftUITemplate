@@ -9,14 +9,13 @@ import ProjectDescription
 
 /// micro framework
 public struct MicroFeature: HasReference, Hashable {
-    internal init(name: String, group: MicroFeatureGroup, requiredTargetTypes: RequiredTargetTypes, destinations: Destinations, deploymentTargets: DeploymentTargets? = nil) {
+    init(name: String, group: MicroFeatureGroup, requiredTargetTypes: RequiredTargetTypes, destinations: Destinations, deploymentTargets: DeploymentTargets? = nil) {
         self.name = name
         self.group = group
         self.requiredTargetTypes = requiredTargetTypes
-        self.destinations = destinations
+        _destinations = destinations
         _deploymentTargets = deploymentTargets
     }
-
 
     let name: String
     let group: MicroFeatureGroup
@@ -246,9 +245,8 @@ private extension DeploymentTargets {
 }
 
 extension MicroFeature {
-
     func globPath(_ relativePath: String) -> ProjectDescription.Path {
-        let thePath: String = "\(path)/\(relativePath)"
+        let thePath = "\(path)/\(relativePath)"
         switch GenerationConfig.default.mode {
         case .singleProject:
             return .relativeToManifest(thePath)
@@ -259,15 +257,15 @@ extension MicroFeature {
         }
     }
 
-    func resourceGlob(_ relativePath: String)-> ProjectDescription.ResourceFileElement {
+    func resourceGlob(_ relativePath: String) -> ProjectDescription.ResourceFileElement {
         return .glob(pattern: globPath(relativePath))
     }
 
-    func fileListGlob(_ relativePath: String)-> ProjectDescription.FileListGlob {
+    func fileListGlob(_ relativePath: String) -> ProjectDescription.FileListGlob {
         return .glob(globPath(relativePath))
     }
 
-    func sourceGlob(_ relativePath: String)-> ProjectDescription.SourceFileGlob {
+    func sourceGlob(_ relativePath: String) -> ProjectDescription.SourceFileGlob {
         return .glob(globPath(relativePath))
     }
 
@@ -330,15 +328,15 @@ extension MicroFeature {
 
         let targetPostProcessor = requiredTargetTypes.targetPostProcessor(.framework)
         let sources = targetPostProcessor(.target(name: name,
-                                                 destinations: destinations,
-                                                 product: product,
-                                                 bundleId: "io.tuist.\(name)".validBundleId,
-                                                 deploymentTargets: deploymentTargets,
-                                                 infoPlist: .default,
-                                                 sources: [sourceGlob("Sources/**")],
-                                                 resources: resourceName, // resources provided by feature, e.g. ManResources
-                                                 headers: header,
-                                                 dependencies: dependentReferences(types: [.framework])))
+                                                  destinations: destinations,
+                                                  product: product,
+                                                  bundleId: "io.tuist.\(name)".validBundleId,
+                                                  deploymentTargets: deploymentTargets,
+                                                  infoPlist: .default,
+                                                  sources: [sourceGlob("Sources/**")],
+                                                  resources: resourceName, // resources provided by feature, e.g. ManResources
+                                                  headers: header,
+                                                  dependencies: dependentReferences(types: [.framework])))
 
         if !requiredTargetTypes.contains(.unitTests) { return [sources] }
 
@@ -353,14 +351,14 @@ extension MicroFeature {
             .external(name: "Quick"),
         ] + dependentReferences(types: [.unitTests])
         let tests: Target = .target(name: "\(name)Tests",
-                           destinations: destinations,
-                           product: .unitTests,
-                           bundleId: "io.tuist.\(name)Tests".validBundleId,
-                           deploymentTargets: deploymentTargets,
-                           infoPlist: .default,
-                           sources: [sourceGlob("Tests/**")],
-                           resources: testResourceName, // resources for testing
-                           dependencies: testDependencies)
+                                    destinations: destinations,
+                                    product: .unitTests,
+                                    bundleId: "io.tuist.\(name)Tests".validBundleId,
+                                    deploymentTargets: deploymentTargets,
+                                    infoPlist: .default,
+                                    sources: [sourceGlob("Tests/**")],
+                                    resources: testResourceName, // resources for testing
+                                    dependencies: testDependencies)
         return [sources, tests]
     }
 
@@ -382,7 +380,7 @@ extension MicroFeature {
         // include the Assets folder as well if the example target has resources
         // Example/Shared/Assets.xcassets is the default location for the example app's assets
         let resourceName: ResourceFileElements = requiredTargetTypes.hasResources(.exampleApp) ?
-                [resourceGlob("Example/Shared/*.xcassets"), resourceGlob("Example/Assets/**")]
+            [resourceGlob("Example/Shared/*.xcassets"), resourceGlob("Example/Assets/**")]
             :
             [resourceGlob("Example/Shared/*.xcassets")]
 
@@ -400,40 +398,39 @@ extension MicroFeature {
 
         var results: [Target] = [mainTarget]
 
-
         if requiredTargetTypes.contains(.uiTests) {
             let uiTests: Target = .target(name: "\(exampleName)UITests",
-                    destinations: destinations,
-                    product: .uiTests,
-                    bundleId: "io.tuist.\(name)UITests".validBundleId,
-                    deploymentTargets: deploymentTargets,
-                    infoPlist: .default,
-                    sources: [sourceGlob("Example/UITests/**")], // TODO: need to fix the path for ui tests
-                    resources: [], // resources for testing (really need resources for UI testing?
-                    dependencies: [.target(name: exampleName),
-                                   .external(name: "Nimble"),
-                                   .external(name: "Quick")]
-                            + dependentReferences(types: [.uiTests]))
+                                          destinations: destinations,
+                                          product: .uiTests,
+                                          bundleId: "io.tuist.\(name)UITests".validBundleId,
+                                          deploymentTargets: deploymentTargets,
+                                          infoPlist: .default,
+                                          sources: [sourceGlob("Example/UITests/**")], // TODO: need to fix the path for ui tests
+                                          resources: [], // resources for testing (really need resources for UI testing?
+                                          dependencies: [.target(name: exampleName),
+                                                         .external(name: "Nimble"),
+                                                         .external(name: "Quick")]
+                                              + dependentReferences(types: [.uiTests]))
             results.append(uiTests)
         }
 
         if requiredTargetTypes.contains(.exampleAppTests) {
             let resourceName: ResourceFileElements = requiredTargetTypes.hasResources(.exampleAppTests) ?
-                    [resourceGlob("Example/Tests/Assets/**")]
-                    :
-                    []
+                [resourceGlob("Example/Tests/Assets/**")]
+                :
+                []
             let exampleAppTests: Target = .target(name: "\(exampleName)Tests",
-                    destinations: destinations,
-                    product: .unitTests,
-                    bundleId: "io.tuist.\(exampleName)Tests".validBundleId,
-                    deploymentTargets: deploymentTargets,
-                    infoPlist: .default,
-                    sources: [sourceGlob("Example/Tests/Sources/**")],
-                    resources: resourceName, // resources for testing
-                    dependencies: [.target(name: exampleName),
-                                   .external(name: "Nimble"),
-                                   .external(name: "Quick")]
-                            + dependentReferences(types: [.exampleAppTests]))
+                                                  destinations: destinations,
+                                                  product: .unitTests,
+                                                  bundleId: "io.tuist.\(exampleName)Tests".validBundleId,
+                                                  deploymentTargets: deploymentTargets,
+                                                  infoPlist: .default,
+                                                  sources: [sourceGlob("Example/Tests/Sources/**")],
+                                                  resources: resourceName, // resources for testing
+                                                  dependencies: [.target(name: exampleName),
+                                                                 .external(name: "Nimble"),
+                                                                 .external(name: "Quick")]
+                                                      + dependentReferences(types: [.exampleAppTests]))
             results.append(exampleAppTests)
         }
 

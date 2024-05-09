@@ -29,6 +29,7 @@ extension Module: PackageDependencyProviding {
 }
 
 import ProjectDescription
+
 extension PackageDependencyProviding {
     func packages(types: TargetTypes) -> [Package] {
         packageDependencies(types: types).map(\.package)

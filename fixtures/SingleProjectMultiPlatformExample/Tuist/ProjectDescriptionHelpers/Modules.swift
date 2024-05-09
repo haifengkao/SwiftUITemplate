@@ -25,6 +25,7 @@ private extension Module {
         destinations: [.iPhone, .iPad],
         deploymentTargets: .init(iOS: "15.0"))
     }
+
     static var MyMacOSApp: Module {
         .uFeature(name: "MyMacOSApp", targets: [
             .exampleApp: .resourcesOnly.targetPostProcessor { t -> Target in
@@ -38,7 +39,7 @@ private extension Module {
                 .MyInfrastructureCode,
             ]),
         ],
-                destinations: [.mac],
+        destinations: [.mac],
         deploymentTargets: .init(macOS: "11.0"))
     }
 
@@ -71,7 +72,7 @@ private extension Module {
                       .exampleApp: .default,
                       .unitTests: .default,
                       .framework: .hasDependencies([
-                      ])
+                      ]),
                   ])
     }
 
