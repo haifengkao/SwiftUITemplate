@@ -9,12 +9,17 @@ import ProjectDescription
 import SwiftUITemplate
 
 private extension Module {
+
     static var MyApp: Module {
         .uFeature(name: "MyApp", targets: [
-            .exampleApp: .resourcesOnly.targetPostProcessor { t -> Target in
-                // change any Target property here
-                t |> Target.lens.productName .~ "MyApp1"
-
+            .exampleApp: .resourcesOnly.targetPostProcessor { target in
+                let existingSources: [ProjectDescription.SourceFileGlob] = target.sources?.globs ?? []
+                let mlModelGlob: ProjectDescription.SourceFileGlob = .glob(.relativeToManifest("Features/MyApp/Example/MLModel/*.mlpackage"), compilerFlags: "--encrypt Features/MyApp/Example/MLModel/MNISTClassifier.mlmodelkey")
+                let updatedSources = SourceFilesList.sourceFilesList(globs: existingSources + [mlModelGlob])
+                
+                return target
+                    |> Target.lens.productName .~ "MyApp1"
+                    |> Target.lens.sources .~ updatedSources
             },
             .unitTests: .default,
             .exampleAppTests: .resourcesOnly,

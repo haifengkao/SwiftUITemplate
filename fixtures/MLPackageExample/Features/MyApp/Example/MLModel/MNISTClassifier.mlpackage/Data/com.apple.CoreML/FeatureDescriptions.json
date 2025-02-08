@@ -1,0 +1,21 @@
+{
+  "Inputs" : {
+    "image" : {
+      "MLFeatureShortDescription" : "Image of the digit drawing to be classified"
+    }
+  },
+  "Outputs" : {
+    "labelProbabilities" : {
+      "MLFeatureShortDescription" : "Probability of each digit"
+    },
+    "classLabel" : {
+      "MLFeatureShortDescription" : "Most likely digit"
+    }
+  },
+  "TrainingInputs" : {
+
+  },
+  "States" : {
+
+  }
+}
