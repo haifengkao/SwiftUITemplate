@@ -169,7 +169,9 @@ It will create `MyFeature1` in `Features` folder.
 
 ## Wiki
 A LLM generated wiki
+
 [DeepWiki](https://deepwiki.com/haifengkao/SwiftUITemplate/7-api-reference)
+
 I am too lazy to write a complete doc
 
 ## Contribute
